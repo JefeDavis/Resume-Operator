@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: resume-cert
+  labels:
+    resume.jefedavis.dev/candidate: johndoe
+data:
+  VCP-DCV.yaml: |-
+    ---
+    title: Title
+    issuer: Issuer
+    earnedDate: 2006-01-02
+    alias: Alias
+    validationURL: ValidationURL
+    imageURL: ImageURL

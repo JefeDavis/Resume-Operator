@@ -1,0 +1,19 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: resume
+  labels:
+    resume.jefedavis.dev/candidate: johndoe
+spec:
+  rules:
+  - host: example.com
+    https:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: resume-svc
+            port: 
+              number: 8080

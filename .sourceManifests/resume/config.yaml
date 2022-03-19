@@ -1,0 +1,38 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: resume-config
+  labels:
+    resume.jefedavis.dev/candidate: johndoe
+data:
+  config.toml: |-
+    languageCode = "en-us"
+    defaultContentLanguage = "en"
+    enableRobotsTXT = true
+    enableEmoji = true
+
+    theme = "resume"
+    disableKinds = ["page", "section", "taxonomy", "term", "RSS", "sitemap"]
+
+    baseURL = "https://example.com/"
+    title = "John Doe - CV"
+    #googleAnalytics = ""
+
+    [params]
+    enableMetaTags = true
+    colorLight = "#fff"
+    colorDark = "#666"
+    colorPageBackground = "#ddd"
+    colorPrimary = "#4C7535" #LightGreen
+    colorSecondary = "#68B3C2" #LightTeal
+    colorHeader = "#3E762A" #DarkGreen
+    colorHeader2 = "#33779D" #DarkTeal
+    colorIconPrimary = "#fff"
+    colorIconBackground = "#96B986"
+    colorRightColumnBackground = "#f5f5f5"
+    colorRightColumnHeadingText = "#4C7535"
+    colorRightColumnBodyText = "#666"
+    colorRightColumnIconPrimary = "#fff"
+    colorRightColumnIconBackground = "#96B986"
+    pages = PageCount

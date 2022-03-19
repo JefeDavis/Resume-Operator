@@ -1,0 +1,49 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resume
+  labels:
+    resume.jefedavis.dev/candidate: johndoe
+spec:
+  selector:
+    matchLabels:
+      resume.jefedavis.dev/candidate: johndoe
+  template:
+    metadata:
+      labels:
+        resume.jefedavis.dev/candidate: johndoe
+    spec:
+      containers:
+        - name: resume
+          image: ghcr.io/jefedavis/resume:latest
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: 500m
+              memory: 128Mi
+          volumeMounts:
+            - mountPath: /site/data
+              name: profile-mount
+            - mountPath: /site/data/experience/
+              name: experience-mount
+            - mountPath: /site/data/certs
+              name: certs-mount
+            - mountPath: /site/config.toml
+              subPath: config.toml
+              name: config
+      volumes:
+        - name: profile-mount
+          configMap:
+            name: resume-profile
+        - name: experience-mount
+          configMap:
+            name: resume-experience
+        - name: certs-mount
+          configMap:
+            name: resume-cert
+        - name: config
+          configMap:
+            name: resume-config
+
+            
