@@ -1,0 +1,21 @@
+---
+apiVersion: resumes.jefedavis.dev/v1alpha1
+kind: JobExperience
+metadata:
+  name: vmware-jobs
+  labels:
+    resume.jefedavis.dev/candidate: jeffdavis
+    resume.jefedavis.dev/employer: vmwareTanzuLabs
+spec:
+  employer: VMware Tanzu Labs
+  location: Remote
+  startDate: 2021-03-01
+  endDate: Present
+  positions:
+    - title: Staff Field Engineer
+      highlights:
+        - Developed open-source tool to convert Kubernetes manifests into fully functional Kubernetes Operators to preform create, update, and delete lifecycles of an application
+        - Created Golang library to convert Kubernetes Yaml manifests into Golang structs
+        - Engineered open-source tool to allow overlaying Yaml manifests via Json Path specification
+        - Designed Golang “marker” lexer using state machine concepts to understand marker comments in Yaml manifests and Golang source code
+        - Consulted on reference architecture for Tanzu Kubernetes on vSphere

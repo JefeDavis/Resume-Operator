@@ -1,0 +1,60 @@
+---
+apiVersion: resumes.jefedavis.dev/v1alpha1
+kind: Certification
+metadata:
+  name: vcix6-dcv
+  labels:
+    resume.jefedavis.dev/candidate: jeffdavis
+    resume.jefedavis.dev/vendor: vmware
+spec:
+  title: VMware Certified Implementation Expert 6 – Data Center Virtualization
+  issuer: VMware
+  earnedDate: 2016-12-20
+  alias: VCIX6-DCV
+  validationURL: https://www.credly.com/badges/3bae0a95-5c8f-45b3-9dd5-33bc89c66b6c
+  imageURL: https://images.credly.com/size/680x680/images/3852064e-20ca-4df9-b85a-3e80761dafa8/vmware_Milestone_IE_DCV6.png
+---
+apiVersion: resumes.jefedavis.dev/v1alpha1
+kind: Certification
+metadata:
+  name: vcap6-dcv-design
+  labels:
+    resume.jefedavis.dev/candidate: jeffdavis
+    resume.jefedavis.dev/vendor: vmware
+spec:
+  title: VMware Certified Advanced Professional 6 – Data Center Virtualization Design
+  issuer: VMware
+  earnedDate: 2016-12-19
+  alias: VCAP-DCV-Design
+  validationURL: https://www.credly.com/badges/6a79ad6c-bb0c-4ea8-b07c-62f8cb33976f
+  imageURL: https://images.credly.com/size/680x680/images/c7d6f423-9485-45c2-b93d-c812428c0f64/vmware_Cert_AP_DCV6.png
+---
+apiVersion: resumes.jefedavis.dev/v1alpha1
+kind: Certification
+metadata:
+  name: vcap5-dcv-deploy
+  labels:
+    resume.jefedavis.dev/candidate: jeffdavis
+    resume.jefedavis.dev/vendor: vmware
+spec:
+  title: VMware Certified Advanced Professional 5 - Data Center Virtualization Deploy
+  issuer: VMware
+  earnedDate: 2015-07-12
+  alias: VCAP5-DCV-Deploy
+  validationURL: https://www.credly.com/badges/3bae0a95-5c8f-45b3-9dd5-33bc89c66b6c
+  imageURL: https://images.credly.com/size/680x680/images/3852064e-20ca-4df9-b85a-3e80761dafa8/vmware_Milestone_IE_DCV6.png
+---
+apiVersion: resumes.jefedavis.dev/v1alpha1
+kind: Certification
+metadata:
+  name: vcp-dcv
+  labels:
+    resume.jefedavis.dev/candidate: jeffdavis
+    resume.jefedavis.dev/vendor: vmware
+spec:
+  title: VMware Certified Professional - Data Center Virtualization 2020
+  issuer: VMware
+  earnedDate: 2020-12-18
+  alias: VCP-DCV
+  validationURL: https://www.credly.com/badges/9a0d11be-1a60-4ca9-9e58-77ed2dedd7d1
+  imageURL: https://images.credly.com/size/680x680/images/6eaada2e-87dc-44ec-96c2-2d8e84ed6796/Vmware_Cert_Prof_DCV20.png 

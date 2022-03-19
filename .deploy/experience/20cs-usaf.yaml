@@ -1,0 +1,21 @@
+---
+apiVersion: resumes.jefedavis.dev/v1alpha1
+kind: JobExperience
+metadata:
+  name: 20cs-usaf-jobs
+  labels:
+    resume.jefedavis.dev/candidate: jeffdavis
+    resume.jefedavis.dev/employer: usaf
+spec:
+  employer: 20th Communication Squadron, USAF
+  location: Shaw AFB, South Carolina
+  startDate: 2009-08-11
+  endDate: 2014-06-14
+  positions:
+    - title: Network Security Lead
+      highlights:
+        - Oversaw preventive and restorative measures on 57 servers and terminal equipment supporting a $1.9M network with 9.6K users
+        - Operated cryptographic equipment for base distribution point and defense communications systems equipment
+        - Directed implementation of national, Department of Defense & Air Force network security policies & directives
+        - Oversaw operation and maintenance of local firewalls and proxy servers to protect base information resources
+        - Performed network security assessments to minimize virus threats, malicious logic and software vulnerabilities

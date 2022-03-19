@@ -1,0 +1,24 @@
+---
+apiVersion: resumes.jefedavis.dev/v1alpha1
+kind: JobExperience
+metadata:
+  name: 691cos-usaf-jobs
+  labels:
+    resume.jefedavis.dev/candidate: jeffdavis
+    resume.jefedavis.dev/employer: usaf
+spec:
+  employer: 691st Cyber Operatations Squadron, USAF
+  location: Ramstein AB, Germany
+  startDate: 2014-06-15
+  endDate: 2018-06-20
+  positions:
+    - title: Senior Storage and Virtualization Engineer
+      highlights:
+        - Designed and Deployed vSphere 6.5 architecture at 6 data centers and 22 branch offices across 10 countries
+        - Acted as chief technical advisor in support of data center deployments, upgrades and optimizations.
+        - Engineered/automated $89M standardized enterprise virtual infrastructure platform sustaining 133 virtual suites
+        - Coordinated Air Force Life Cycle Management Center/industry support; Developed best practices for both classified and unclassified networks, standards, and configurations for enterprise employment
+        - Administered 1300+ virtual/backup servers on $10B enterprise network supporting 46K users at 7 data centers/114 branch offices
+        - Designed content replication architecture to provide standardized VM deployment capabilities across 29 sites decreasing deployment time 90% 
+        - Developed automated means of network deployment ensuring standardized and rapid deployment of new data centers
+        - Collaborated with VMware, Dell, and Microsoft Personnel to develop turn-key enterprise solutions for deployment on the Air Force Network 

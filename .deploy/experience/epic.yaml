@@ -1,0 +1,31 @@
+---
+apiVersion: resumes.jefedavis.dev/v1alpha1
+kind: JobExperience
+metadata:
+  name: epic-jobs
+  labels:
+    resume.jefedavis.dev/candidate: jeffdavis
+    resume.jefedavis.dev/employer: epicSystems
+spec:
+  employer: Epic Systems
+  location: Madison, Wisconsin
+  startDate: 2018-07-02
+  endDate: 2021-02-24
+  positions:
+    - title: Development Platform Lead
+      startDate: 2020-06-05
+      highlights:
+        - Led 4 person Site Reliability Engineer team to maintain Development platform consisting of GitLab SCM, Artifactory artifact management software, Security Controls, and Kubernetes Platform
+        - Lead Architect for Infrastructure as Code technologies and auto enforcement strategies for Epic Hosted platform
+        - Advisor for Container Strategies across Epic systems Portfolio
+        - Engineered CI/CD pipeline for 12 languages; allowed automated testing, documentation, building, packaging, and deployment for 200+ developers
+        - Designed and taught introduction to development courses for new staff; provided common terminology and framework for getting started with git and on-ramp for new developers.
+        - Blueprinted centralized GraphQL service to combine disparate data into single endpoint; delivered single source of truth to integrate customer, provisioning, and environment information into automation.
+    - title: Virtualization DevOps Engineer
+      endDate: 2020-06-04
+      highlights:
+        - Developed containerized risk-aware desired state configuration application suite to configure virtual infrastructure; delivered automated consistency and standardization of 60+ vCenters, 38K+ VMs, 3.4K hosts
+        - Champion for automating processes throughout organization; lead automation developer, SME for PowerShell, Golang, and Container design discussions.
+        - Lead Team Code Reviewer, analyzed code from 6+ different languages to provide feedback, test for bugs, and mentor on how to create scalable, optimized, and readable code
+        - Developed automated end-to-end VM provisioning process; reduced deployment time by 80%
+        - Instituted standardized Module and API Server Frameworks allowing for standard, consistent and faster startup time for new developers.

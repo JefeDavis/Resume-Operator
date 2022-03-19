@@ -1,0 +1,84 @@
+---
+apiVersion: resumes.jefedavis.dev/v1alpha1
+kind: Profile
+metadata:
+  name: jeff-davis
+  labels:
+    resume.jefedavis.dev/candidate: jeffdavis
+  annotations:
+    resume.jefedavis.dev/security-clearance: "true"
+    resume.jefedavis.dev/security-clearance-level: ts/sci
+spec:
+  profile:
+    firstName: Jeff
+    lastName: Davis
+    location: South Carolina
+    email: mr.JefeDavis@gmail.com
+    phoneNumber: +1-605-269-8437
+    linkedinURL: https://linkedin.com/in/JefeDavis
+    githubURL: https://github.com/JefeDavis
+    overview: Passionate Kubernetes Engineer with automation, design, and architecture
+      experience along with strong programming and troubleshooting skills in enterprise
+      environments. Self-motivated with not only a desire to learn, but to lead and teach
+      others as well. Seeking a professionally challenging environment to engage
+      technical and automation skills. 
+    coreCompetencies:
+      - Virtual and Container technology design, implementation, and troubleshooting
+      - Deep understanding of underlyingdata center concepts and theories
+      - Expert on Automating problems to remove roadblocks and ease operational overhead
+      - Productivity in high pressure situations
+      - Analytical thinking
+      - Written and oral communication
+      - Confidence briefing executive staff
+      - Datacenter design & architecture
+      - Experienced traveler
+    skills:
+      - family: Programming
+        items:
+          - Golang
+          - PowerShell
+          - Python
+          - Docker
+          - Helm
+          - GraphQL
+          - Yaml
+          - Bash
+          - HTML (including Jinja)
+          - Javascript
+          - CSS
+          - SCSS
+      - family: Developer Tools
+        items:
+          - Git
+          - Gitlab
+          - Github
+          - Gitlab CI
+          - Github Actions
+      - family: Infrastructure-as-Code
+        items:
+          - Terraform
+          - Puppet
+          - Ansible
+      - family: Container Orchestration
+        items:
+          - Kubernetes
+          - Docker Swarm
+          - OpenShift
+      - family: Serverless
+        items:
+          - Knative
+          - OpenFaas
+          - Openshift
+      - family: Monitoring
+        items:
+          - Prometheus
+          - Grafana
+          - Splunk
+  baseURL: "resume.jefedavis.dev"
+  pageTitle: "Jeff Davis - CV"
+  pageCount: "1"
+  image:
+    registry: ""
+    name: "jefedavis/resume"
+    tag: "latest"
+    pullPolicy: "Always"
