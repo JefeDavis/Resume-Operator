@@ -1,0 +1,57 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resume
+  labels:
+    #+operator-builder:collection:field:name="profile.firstName",type=string,default="John",replace="john"
+    #+operator-builder:collection:field:name="profile.lastName",type=string,default="Doe",replace="doe"
+    resume.jefedavis.dev/candidate: johndoe
+spec:
+  selector:
+    matchLabels:
+      #+operator-builder:collection:field:name="profile.firstName",type=string,default="John",replace="john"
+      #+operator-builder:collection:field:name="profile.lastName",type=string,default="Doe",replace="doe"
+      resume.jefedavis.dev/candidate: johndoe
+  template:
+    metadata:
+      labels:
+        #+operator-builder:collection:field:name="profile.firstName",type=string,default="John",replace="john"
+        #+operator-builder:collection:field:name="profile.lastName",type=string,default="Doe",replace="doe"
+        resume.jefedavis.dev/candidate: johndoe
+    spec:
+      containers:
+        - name: resume
+          #+operator-builder:field:name="image.registry",type=string,default="",replace="ghcr.io/"
+          #+operator-builder:field:name="image.name",type=string,default="jefedavis/resume",replace="jefedavis/resume"
+          #+operator-builder:field:name="image.tag",type=string,default="latest",replace="latest"
+          image: ghcr.io/jefedavis/resume:latest
+          #+operator-builder:field:name="image.pullPolicy",type=string,default="IfNotPresent"
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              cpu: 500m
+              memory: 128Mi
+          volumeMounts:
+            - mountPath: /site/data
+              name: profile-mount
+            - mountPath: /site/data/experience/
+              name: experience-mount
+            - mountPath: /site/data/certs
+              name: certs-mount
+            - mountPath: /site/config.toml
+              subPath: config.toml
+              name: config
+      volumes:
+        - name: profile-mount
+          configMap:
+            name: resume-profile
+        - name: experience-mount
+          configMap:
+            name: resume-experience
+        - name: certs-mount
+          configMap:
+            name: resume-cert
+        - name: config
+          configMap:
+            name: resume-config

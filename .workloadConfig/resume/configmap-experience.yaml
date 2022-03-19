@@ -1,0 +1,29 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: resume-experience
+  labels:
+    #+operator-builder:collection:field:name="profile.firstName",type=string,default="John",replace="john"
+    #+operator-builder:collection:field:name="profile.lastName",type=string,default="Doe",replace="doe"
+    resume.jefedavis.dev/candidate: johndoe
+data:
+  #+operator-builder:field:name=employer,type=string,replace=Employer
+  #+operator-builder:field:name=location,type=string,replace=Location
+  #+operator-builder:field:name=startDate,type=string,replace="2006-01-02"
+  #+operator-builder:field:name=endDate,type=string,replace=Present
+  #+operator-builder:field:name="position.title",type=string,replace=Title
+  #+operator-builder:field:name="position.startDate",default="",type=string,replace=StartDate1
+  #+operator-builder:field:name="position.endDate",default="",type=string,replace=EndDate1
+  #+operator-builder:field:name="position.highlights",default="",type=string,replace=Highlights
+  vmware.yaml: |-
+    ---
+    employer: Employer
+    location: Location
+    startDate: 2006-01-02
+    endDate: Present
+    positions:
+      - title: Title
+        startDate: StartDate1
+        endDate: EndDate1
+        highlights: Highlights

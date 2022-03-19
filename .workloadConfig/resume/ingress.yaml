@@ -1,0 +1,22 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: resume
+  labels:
+    #+operator-builder:collection:field:name="profile.firstName",type=string,default="John",replace="john"
+    #+operator-builder:collection:field:name="profile.lastName",type=string,default="Doe",replace="doe"
+    resume.jefedavis.dev/candidate: johndoe
+spec:
+  rules:
+    - #+operator-builder:field:name=baseURL,type=string,default="example.com"
+      host: example.com
+      https:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: resume-svc
+                port:
+                  number: 8080

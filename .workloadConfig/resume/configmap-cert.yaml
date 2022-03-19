@@ -1,0 +1,24 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: resume-cert
+  labels:
+    #+operator-builder:collection:field:name="profile.firstName",type=string,default="John",replace="john"
+    #+operator-builder:collection:field:name="profile.lastName",type=string,default="Doe",replace="doe"
+    resume.jefedavis.dev/candidate: johndoe
+data:
+  #+operator-builder:field:name=title,type=string,replace="Title"
+  #+operator-builder:field:name=issuer,type=string,replace="Issuer"
+  #+operator-builder:field:name=earnedDate,type=string,replace="2006-01-02"
+  #+operator-builder:field:name=alias,type=string,replace="Alias"
+  #+operator-builder:field:name=validationURL,type=string,default="",replace="ValidationURL"
+  #+operator-builder:field:name=imageURL,type=string,default="",replace="ImageURL"
+  VCP-DCV.yaml: |-
+    ---
+    title: Title
+    issuer: Issuer
+    earnedDate: 2006-01-02
+    alias: Alias
+    validationURL: ValidationURL
+    imageURL: ImageURL

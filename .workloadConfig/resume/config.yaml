@@ -1,0 +1,43 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: resume-config
+  labels:
+    #+operator-builder:collection:field:name="profile.firstName",type=string,default="John",replace="john"
+    #+operator-builder:collection:field:name="profile.lastName",type=string,default="Doe",replace="doe"
+    resume.jefedavis.dev/candidate: johndoe
+data:
+  #+operator-builder:field:name=baseURL,type=string,default="example.com",replace="example.com"
+  #+operator-builder:field:name=pageTitle,type=string,default="John Doe - CV",replace="John Doe - CV"
+  #+operator-builder:field:name=pageCount,type=string,default="1",replace="PageCount"
+  config.toml: |-
+    languageCode = "en-us"
+    defaultContentLanguage = "en"
+    enableRobotsTXT = true
+    enableEmoji = true
+
+    theme = "resume"
+    disableKinds = ["page", "section", "taxonomy", "term", "RSS", "sitemap"]
+
+    baseURL = "https://example.com/"
+    title = "John Doe - CV"
+    #googleAnalytics = ""
+
+    [params]
+    enableMetaTags = true
+    colorLight = "#fff"
+    colorDark = "#666"
+    colorPageBackground = "#ddd"
+    colorPrimary = "#4C7535" #LightGreen
+    colorSecondary = "#68B3C2" #LightTeal
+    colorHeader = "#3E762A" #DarkGreen
+    colorHeader2 = "#33779D" #DarkTeal
+    colorIconPrimary = "#fff"
+    colorIconBackground = "#96B986"
+    colorRightColumnBackground = "#f5f5f5"
+    colorRightColumnHeadingText = "#4C7535"
+    colorRightColumnBodyText = "#666"
+    colorRightColumnIconPrimary = "#fff"
+    colorRightColumnIconBackground = "#96B986"
+    pages = PageCount

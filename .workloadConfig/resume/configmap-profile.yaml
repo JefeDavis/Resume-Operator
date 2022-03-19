@@ -1,0 +1,40 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: resume-profile
+  labels:
+    #+operator-builder:collection:field:name="profile.firstName",type=string,default="John",replace="john"
+    #+operator-builder:collection:field:name="profile.lastName",type=string,default="Doe",replace="doe"
+    resume.jefedavis.dev/candidate: johndoe
+data:
+  #+operator-builder:field:name="profile.firstName",type=string,default=John,replace=FirstName
+  #+operator-builder:field:name="profile.lastName",type=string,default=Doe,replace=LastName
+  #+operator-builder:field:name="profile.phoneNumber",type=string,default="",replace=PhoneNumber
+  #+operator-builder:field:name="profile.email",type=string,default="",replace=Email
+  #+operator-builder:field:name="profile.linkedinURL",type=string,default="",replace=LinkedInURL
+  #+operator-builder:field:name="profile.githubURL",type=string,default="",replace=GitHubURL
+  #+operator-builder:field:name="profile.location",type=string,default="South Carolina",replace=Location
+  #+operator-builder:field:name="profile.overview",type=string,default="",replace=Overview
+  #+operator-builder:field:name="profile.coreCompetencies",type=string,default="",replace=CoreCompetencies
+  #+operator-builder:field:name="profile.skills",type=string,default="",replace=Skills
+  profile.yaml: |-
+    ---
+    basicInfo:
+      firstName: FirstName
+      lastName: LastName
+      photo: img/avatar.jpg
+      contacts:
+        - icon: fa-solid fa-phone
+          info: PhoneNumber
+        - icon: fa-solid fa-envelope
+          info: Email
+        - icon: fa-brands fa-linkedin
+          info: LinkedInURL
+        - icon: fa-brands fa-github
+          info: GitHubURL
+        - icon: fa-solid fa-map-marker-alt
+          info: Location
+    overview: Overview
+    coreCompetencies: CoreCompetencies
+    skills: Skills
