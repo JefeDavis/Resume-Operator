@@ -1,0 +1,13 @@
+name: experience
+kind: ComponentWorkload
+spec:
+  api:
+    group: resumes
+    version: v1alpha1
+    kind: JobExperience
+    clusterScoped: false
+  companionCliSubcmd:
+    name: job-experience
+    description: Manage resume job experience component
+  resources:
+  - resume/configmap-experience.yaml

@@ -1,0 +1,13 @@
+name: certification
+kind: ComponentWorkload
+spec:
+  api:
+    group: resumes
+    version: v1alpha1
+    kind: Certification
+    clusterScoped: false
+  companionCliSubcmd:
+    name: certification
+    description: Manage resume certification component
+  resources:
+  - resume/configmap-cert.yaml

@@ -1,0 +1,21 @@
+---
+name: resume
+kind: WorkloadCollection
+spec:
+  api:
+    domain: jefedavis.dev
+    group: resumes
+    version: v1alpha1
+    kind: Profile
+    clusterScoped: false
+  companionCliRootcmd:
+    name: resumectl
+  resources:
+  - "resume/config.yaml"
+  - "resume/configmap-profile.yaml"
+  - "resume/deployment.yaml"
+  - "resume/service.yaml"
+  - "resume/ingress.yaml"
+  componentFiles:
+  - component-experience.yaml
+  - component-cert.yaml
