@@ -1,0 +1,24 @@
+# permissions for end users to edit profiles.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: profile-editor-role
+rules:
+- apiGroups:
+  - resumes.jefedavis.dev
+  resources:
+  - profiles
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - resumes.jefedavis.dev
+  resources:
+  - profiles/status
+  verbs:
+  - get

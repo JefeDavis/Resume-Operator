@@ -1,0 +1,31 @@
+apiVersion: resumes.jefedavis.dev/v1alpha1
+kind: Profile
+metadata:
+  name: profile-sample
+  namespace: default
+spec:
+  profile:
+    firstName: "John"
+    lastName: "Doe"
+    phoneNumber: ""
+    email: ""
+    linkedinURL: ""
+    githubURL: ""
+    location: "South Carolina"
+    overview: ""
+    coreCompetencies:
+      - Reading
+      - Writing
+    skills: 
+      - family: Developer Tools
+        items:
+          - Git
+          - Kubernetes
+  baseURL: "example.com"
+  pageTitle: "John Doe - CV"
+  pageCount: "1"
+  image:
+    registry: ""
+    name: "jefedavis/resume"
+    tag: "latest"
+    pullPolicy: "IfNotPresent"

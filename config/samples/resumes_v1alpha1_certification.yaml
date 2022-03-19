@@ -1,0 +1,15 @@
+apiVersion: resumes.jefedavis.dev/v1alpha1
+kind: Certification
+metadata:
+  name: certification-sample
+  namespace: default
+spec:
+  #collection:
+    #name: "profile-sample"
+    #namespace: ""
+  title: "VMware Certified Professional - DataCenter Virtualization"
+  issuer: "VMware"
+  earnedDate: "2006-01-02"
+  alias: "VCP-DCV"
+  validationURL: ""
+  imageURL: ""

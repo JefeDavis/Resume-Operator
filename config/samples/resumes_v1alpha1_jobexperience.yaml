@@ -1,0 +1,19 @@
+apiVersion: resumes.jefedavis.dev/v1alpha1
+kind: JobExperience
+metadata:
+  name: jobexperience-sample
+  namespace: default
+spec:
+  #collection:
+    #name: "profile-sample"
+    #namespace: ""
+  employer: "Employer"
+  location: "Location"
+  startDate: "2006-01-02"
+  endDate: "Present"
+  positions:
+    - title: "Title"
+      startDate: "2006-01-02"
+      endDate: "Present"
+      highlights:
+        - test

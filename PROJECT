@@ -1,0 +1,21 @@
+domain: jefedavis.dev
+layout:
+- go.kubebuilder.io/v3
+multigroup: true
+plugins:
+  operatorBuilder:
+    cliRootCommandName: resumectl
+    workloadConfigPath: .workloadConfig/collection.yaml
+projectName: resume-builder
+repo: github.com/jefedavis/resume-operator
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: jefedavis.dev
+  group: resumes
+  kind: Profile
+  path: github.com/jefedavis/resume-operator/apis/resumes/v1alpha1
+  version: v1alpha1
+version: "3"
