@@ -1,6 +1,9 @@
 A Kubernetes operator built with
 [operator-builder](https://github.com/vmware-tanzu-labs/operator-builder).
 
+
+# K8s Architecture Diagram
+![](./resume-operator.png)
 ## Local Development & Testing
 
 To install the custom resource/s for this operator, make sure you have a
