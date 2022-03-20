@@ -14,7 +14,7 @@ spec:
   positions:
     - title: Staff Field Engineer
       highlights:
-        - Developed open-source tool to convert Kubernetes manifests into fully functional Kubernetes Operators to preform create, update, and delete lifecycles of an application
+        - Developed open-source tool to convert Kubernetes manifests into fully functional Kubernetes Operators to perform create, update, and delete lifecycles of an application
         - Created Golang library to convert Kubernetes Yaml manifests into Golang structs
         - Engineered open-source tool to allow overlaying Yaml manifests via Json Path specification
         - Designed Golang “marker” lexer using state machine concepts to understand marker comments in Yaml manifests and Golang source code
