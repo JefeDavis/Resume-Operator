@@ -28,10 +28,6 @@ spec:
           image: ghcr.io/jefedavis/resume:latest
           #+operator-builder:field:name="image.pullPolicy",type=string,default="IfNotPresent"
           imagePullPolicy: IfNotPresent
-          resources:
-            limits:
-              cpu: 500m
-              memory: 128Mi
           volumeMounts:
             - mountPath: /site/data
               name: profile-mount

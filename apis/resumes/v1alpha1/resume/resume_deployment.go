@@ -27,33 +27,32 @@ import (
 func CreateDeploymentResume(
 	parent *resumesv1alpha1.Profile,
 ) ([]client.Object, error) {
-
 	resourceObjs := []client.Object{}
-	var resourceObj = &unstructured.Unstructured{
+	resourceObj := &unstructured.Unstructured{
 		Object: map[string]interface{}{
 			"apiVersion": "apps/v1",
 			"kind":       "Deployment",
 			"metadata": map[string]interface{}{
 				"name": "resume",
 				"labels": map[string]interface{}{
-					//controlled by field: profile.firstName
-					//controlled by field: profile.lastName
+					// controlled by field: profile.firstName
+					// controlled by field: profile.lastName
 					"resume.jefedavis.dev/candidate": "" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
 				},
 			},
 			"spec": map[string]interface{}{
 				"selector": map[string]interface{}{
 					"matchLabels": map[string]interface{}{
-						//controlled by field: profile.firstName
-						//controlled by field: profile.lastName
+						// controlled by field: profile.firstName
+						// controlled by field: profile.lastName
 						"resume.jefedavis.dev/candidate": "" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
 					},
 				},
 				"template": map[string]interface{}{
 					"metadata": map[string]interface{}{
 						"labels": map[string]interface{}{
-							//controlled by field: profile.firstName
-							//controlled by field: profile.lastName
+							// controlled by field: profile.firstName
+							// controlled by field: profile.lastName
 							"resume.jefedavis.dev/candidate": "" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
 						},
 					},
@@ -61,18 +60,12 @@ func CreateDeploymentResume(
 						"containers": []interface{}{
 							map[string]interface{}{
 								"name": "resume",
-								//controlled by field: image.registry
-								//controlled by field: image.name
-								//controlled by field: image.tag
+								// controlled by field: image.registry
+								// controlled by field: image.name
+								// controlled by field: image.tag
 								"image": "" + parent.Spec.Image.Registry + "" + parent.Spec.Image.Name + ":" + parent.Spec.Image.Tag + "",
-								//controlled by field: image.pullPolicy
+								// controlled by field: image.pullPolicy
 								"imagePullPolicy": parent.Spec.Image.PullPolicy,
-								"resources": map[string]interface{}{
-									"limits": map[string]interface{}{
-										"cpu":    "500m",
-										"memory": "128Mi",
-									},
-								},
 								"volumeMounts": []interface{}{
 									map[string]interface{}{
 										"mountPath": "/site/data",

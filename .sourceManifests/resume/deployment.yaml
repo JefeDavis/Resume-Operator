@@ -18,10 +18,6 @@ spec:
         - name: resume
           image: ghcr.io/jefedavis/resume:latest
           imagePullPolicy: IfNotPresent
-          resources:
-            limits:
-              cpu: 500m
-              memory: 128Mi
           volumeMounts:
             - mountPath: /site/data
               name: profile-mount
