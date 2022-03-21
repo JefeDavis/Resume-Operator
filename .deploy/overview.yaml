@@ -24,7 +24,7 @@ spec:
       technical and automation skills. 
     coreCompetencies:
       - Virtual and Container technology design, implementation, and troubleshooting
-      - Deep understanding of underlyingdata center concepts and theories
+      - Deep understanding of underlying data center concepts and theories
       - Expert on Automating problems to remove roadblocks and ease operational overhead
       - Productivity in high pressure situations
       - Analytical thinking
@@ -68,15 +68,15 @@ spec:
         items:
           - Knative
           - OpenFaas
-          - Openshift
       - family: Monitoring
         items:
           - Prometheus
           - Grafana
           - Splunk
   baseURL: "resume.jefedavis.dev"
+  certIssuer: letsencrypt-prod
   pageTitle: "Jeff Davis - CV"
-  pageCount: "1"
+  pageCount: "2"
   image:
     registry: ""
     name: "jefedavis/resume"
