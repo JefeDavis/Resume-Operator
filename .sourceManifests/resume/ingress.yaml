@@ -5,10 +5,17 @@ metadata:
   name: resume
   labels:
     resume.jefedavis.dev/candidate: johndoe
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-staging
 spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+      - example.com
+      secretName: resume-tls
   rules:
   - host: example.com
-    https:
+    http:
       paths:
       - pathType: Prefix
         path: "/"

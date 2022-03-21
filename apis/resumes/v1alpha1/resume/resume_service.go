@@ -27,19 +27,18 @@ import (
 func CreateServiceResumeService(
 	parent *resumesv1alpha1.Profile,
 ) ([]client.Object, error) {
-
 	resourceObjs := []client.Object{}
-	var resourceObj = &unstructured.Unstructured{
+	resourceObj := &unstructured.Unstructured{
 		Object: map[string]interface{}{
 			"apiVersion": "v1",
 			"kind":       "Service",
 			"metadata": map[string]interface{}{
-				"name": "resume-service",
+				"name": "resume-svc",
 			},
 			"spec": map[string]interface{}{
 				"selector": map[string]interface{}{
-					//controlled by field: profile.firstName
-					//controlled by field: profile.lastName
+					// controlled by field: profile.firstName
+					// controlled by field: profile.lastName
 					"resume.jefedavis.dev/candidate": "" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
 				},
 				"ports": []interface{}{

@@ -27,26 +27,40 @@ import (
 func CreateIngressResume(
 	parent *resumesv1alpha1.Profile,
 ) ([]client.Object, error) {
-
 	resourceObjs := []client.Object{}
-	var resourceObj = &unstructured.Unstructured{
+	resourceObj := &unstructured.Unstructured{
 		Object: map[string]interface{}{
 			"apiVersion": "networking.k8s.io/v1",
 			"kind":       "Ingress",
 			"metadata": map[string]interface{}{
 				"name": "resume",
 				"labels": map[string]interface{}{
-					//controlled by field: profile.firstName
-					//controlled by field: profile.lastName
+					// controlled by field: profile.firstName
+					// controlled by field: profile.lastName
 					"resume.jefedavis.dev/candidate": "" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
+				},
+				"annotations": map[string]interface{}{
+					// controlled by field: certIssuer
+					"cert-manager.io/cluster-issuer": parent.Spec.CertIssuer,
 				},
 			},
 			"spec": map[string]interface{}{
+				// controlled by field: ingressClass
+				"ingressClassName": parent.Spec.IngressClass,
+				"tls": []interface{}{
+					map[string]interface{}{
+						"hosts": []interface{}{
+							// controlled by field: baseURL
+							parent.Spec.BaseURL,
+						},
+						"secretName": "resume-tls",
+					},
+				},
 				"rules": []interface{}{
 					map[string]interface{}{
-						//controlled by field: baseURL
+						// controlled by field: baseURL
 						"host": parent.Spec.BaseURL,
-						"https": map[string]interface{}{
+						"http": map[string]interface{}{
 							"paths": []interface{}{
 								map[string]interface{}{
 									"pathType": "Prefix",

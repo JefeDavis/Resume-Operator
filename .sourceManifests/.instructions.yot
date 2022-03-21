@@ -72,6 +72,26 @@ yamlFiles:
         value:
           #+operator-builder:field:name=baseURL,type=string,default="example.com"
           host: "%v"
+      - name: customize tls
+        query: ..tls[*].hosts
+        value:
+          #+operator-builder:field:name=baseURL,type=string,default="example.com"
+          - example.com
+      - name: customize ingressClass
+        query: spec[?(@.ingressClassName == "nginx")]
+        value:
+          #+operator-builder:field:name=ingressClass,type=string,default="nginx"
+          ingressClassName: nginx
+      - name: customize certIssuer
+        query: metadata.annotations
+        documentQuery:
+          - query: kind
+            value: Ingress
+        value:
+        annotations:
+          #+operator-builder:field:name="certIssuer",type=string,default="letsencrypt-staging"
+          cert-manager.io/cluster-issuer: letsencrypt-staging
+
           
         
         

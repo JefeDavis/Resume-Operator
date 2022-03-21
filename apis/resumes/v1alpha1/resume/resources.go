@@ -52,6 +52,8 @@ spec:
 				  - Git
 					- Kubernetes
   baseURL: "example.com"
+	ingressClass: nginx
+	certIssuer: letsencrypt-staging
   pageTitle: "John Doe - CV"
   pageCount: "1"
   image:

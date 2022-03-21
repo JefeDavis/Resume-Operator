@@ -40,6 +40,10 @@ spec:
                 default: example.com
                 description: '(Default: "example.com")'
                 type: string
+              certIssuer:
+                default: letsencrypt-staging
+                description: '(Default: "letsencrypt-staging")'
+                type: string
               image:
                 properties:
                   name:
@@ -59,6 +63,10 @@ spec:
                     description: '(Default: "latest")'
                     type: string
                 type: object
+              ingressClass:
+                default: nginx
+                description: '(Default: "nginx")'
+                type: string
               pageCount:
                 default: "1"
                 description: '(Default: "1")'

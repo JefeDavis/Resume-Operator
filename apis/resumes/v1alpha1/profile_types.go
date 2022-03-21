@@ -43,6 +43,16 @@ type ProfileSpec struct {
 	// (Default: "example.com")
 	BaseURL string `json:"baseURL,omitempty"`
 
+	// +kubebuilder:default="nginx"
+	// +kubebuilder:validation:Optional
+	// (Default: "nginx")
+	IngressClass string `json:"ingressClass,omitempty"`
+
+	// +kubebuilder:default="letsencrypt-staging"
+	// +kubebuilder:validation:Optional
+	// (Default: "letsencrypt-staging")
+	CertIssuer string `json:"certIssuer,omitempty"`
+
 	// +kubebuilder:default="John Doe - CV"
 	// +kubebuilder:validation:Optional
 	// (Default: "John Doe - CV")
