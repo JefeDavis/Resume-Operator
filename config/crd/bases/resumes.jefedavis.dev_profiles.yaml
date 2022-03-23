@@ -114,6 +114,11 @@ spec:
                     default: ""
                     description: '(Default: "")'
                     type: string
+                  projects:
+                    description: '(Default: "")'
+                    items:
+                      type: string
+                    type: array
                   skills:
                     description: '(Default: "")'
                     items:

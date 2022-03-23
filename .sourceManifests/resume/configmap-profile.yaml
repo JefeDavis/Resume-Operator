@@ -25,4 +25,5 @@ data:
           info: Location
     overview: Overview
     coreCompetencies: CoreCompetencies
+    projects: Projects
     skills: Skills

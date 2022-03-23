@@ -114,6 +114,11 @@ type ProfileSpecProfile struct {
 	CoreCompetencies []string `json:"coreCompetencies,omitempty"`
 
 	// +kubebuilder:default={}
+	// +kubebuilder:validation:optional
+	// (Default: "")
+	Projects []string `json:"projects,omitempty"`
+
+	// +kubebuilder:default={}
 	// +kubebuilder:validation:Optional
 	// (Default: "")
 	Skills []ProfileSpecSkillFamily `json:"skills,omitempty"`

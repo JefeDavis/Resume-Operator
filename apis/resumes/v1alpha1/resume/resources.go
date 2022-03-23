@@ -46,6 +46,8 @@ spec:
     coreCompetencies: 
 		  - Reading
 			- Writing
+		projects:
+		  - https://github.com/JefeDavis/Resume-Operator
     skills:
 		  - family: Developer Tools
 			  items:

@@ -21,6 +21,7 @@ yamlFiles:
           #+operator-builder:field:name="profile.location",type=string,default="South Carolina",replace=Location
           #+operator-builder:field:name="profile.overview",type=string,default="",replace=Overview
           #+operator-builder:field:name="profile.coreCompetencies",type=string,default="",replace=CoreCompetencies
+          #+operator-builder:field:name="profile.projects",type=string,default="",replace=Projects
           #+operator-builder:field:name="profile.skills",type=string,default="",replace=Skills
           "%k": "%v"
   - name: Add Markers to Certs

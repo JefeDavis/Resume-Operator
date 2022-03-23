@@ -32,6 +32,13 @@ spec:
       - Confidence briefing executive staff
       - Datacenter design & architecture
       - Experienced traveler
+    projects:
+      - https://github.com/vmware-tanzu-labs/operator-builder
+      - https://github.com/vmware-tanzu-labs/yaml-overlay-tool
+      - https://github.com/vmware-tanzu-labs/object-code-generator-for-k8s
+      - https://github.com/vmware-labs/yaml-jsonpath
+      - https://github.com/JefeDavis/resume
+      - https://github.com/JefeDavis/resume-operator
     skills:
       - family: Programming
         items:

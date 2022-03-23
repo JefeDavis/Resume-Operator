@@ -62,6 +62,7 @@ func CreateConfigMapResumeProfile(
 				// controlled by field: profile.location
 				// controlled by field: profile.overview
 				// controlled by field: profile.coreCompetencies
+				// controlled by field: profile.projects
 				// controlled by field: profile.skills
 				"profile.yaml": profileBuffer.String(),
 			},
@@ -96,6 +97,10 @@ overview: {{ .Spec.Profile.Overview }}
 coreCompetencies: 
   {{- range .Spec.Profile.CoreCompetencies }}
   - {{ . }}
+	{{- end }}
+projects:
+  {{- range .Spec.Profile.Projects }}
+	- {{ . }}
 	{{- end }}
 skills: 
   {{- range .Spec.Profile.Skills }}

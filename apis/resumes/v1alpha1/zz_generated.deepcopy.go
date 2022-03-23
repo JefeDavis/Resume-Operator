@@ -406,6 +406,11 @@ func (in *ProfileSpecProfile) DeepCopyInto(out *ProfileSpecProfile) {
 		*out = make([]string, len(*in))
 		copy(*out, *in)
 	}
+	if in.Projects != nil {
+		in, out := &in.Projects, &out.Projects
+		*out = make([]string, len(*in))
+		copy(*out, *in)
+	}
 	if in.Skills != nil {
 		in, out := &in.Skills, &out.Skills
 		*out = make([]ProfileSpecSkillFamily, len(*in))
