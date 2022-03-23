@@ -100,7 +100,7 @@ coreCompetencies:
 	{{- end }}
 projects:
   {{- range .Spec.Profile.Projects }}
-	- {{ . }}
+  - {{ . }}
 	{{- end }}
 skills: 
   {{- range .Spec.Profile.Skills }}
