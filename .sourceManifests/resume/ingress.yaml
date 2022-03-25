@@ -4,7 +4,10 @@ kind: Ingress
 metadata:
   name: resume
   labels:
-    resume.jefedavis.dev/candidate: johndoe
+    app.kubernetes.io/name: hugo
+    app.kubernetes.io/component: webfront
+    app.kubernetes.io/part-of: resume
+    app.kubernetes.io/instance: resume-johndoe
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-staging
 spec:
@@ -24,3 +27,10 @@ spec:
             name: resume-svc
             port: 
               number: 8080
+      - pathType: Prefix
+        path: "/convert"
+        backend:
+          service:
+            name: pdf-converter-svc
+            port: 
+              number: 3000

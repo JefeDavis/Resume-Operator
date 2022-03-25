@@ -3,9 +3,16 @@ apiVersion: v1
 kind: Service
 metadata:
   name: resume-svc
+  labels:
+    app.kubernetes.io/name: hugo
+    app.kubernetes.io/component: webfront
+    app.kubernetes.io/part-of: resume
+    app.kubernetes.io/instance: resume-johndoe
 spec:
   selector:
-    resume.jefedavis.dev/candidate: johndoe
+    app.kubernetes.io/name: hugo
+    app.kubernetes.io/component: webfront
+    app.kubernetes.io/instance: resume-johndoe
   ports:
   - port: 8080
     targetPort: 1313

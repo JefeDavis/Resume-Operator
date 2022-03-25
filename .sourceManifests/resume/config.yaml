@@ -4,7 +4,10 @@ kind: ConfigMap
 metadata:
   name: resume-config
   labels:
-    resume.jefedavis.dev/candidate: johndoe
+    app.kubernetes.io/name: hugo
+    app.kubernetes.io/component: config
+    app.kubernetes.io/part-of: resume
+    app.kubernetes.io/instance: resume-johndoe
 data:
   config.toml: |-
     languageCode = "en-us"

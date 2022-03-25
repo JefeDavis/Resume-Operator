@@ -4,19 +4,26 @@ kind: Ingress
 metadata:
   name: resume
   labels:
+    app.kubernetes.io/name: hugo
+    app.kubernetes.io/component: webfront
+    app.kubernetes.io/part-of: resume
     #+operator-builder:collection:field:name="profile.firstName",type=string,default="John",replace="john"
     #+operator-builder:collection:field:name="profile.lastName",type=string,default="Doe",replace="doe"
-    resume.jefedavis.dev/candidate: johndoe
+    app.kubernetes.io/instance: resume-johndoe
+    app.kubernetes.io/managed-by: resume-operator
+    app.kubernetes.io/created-by: resume-controller-manager
+    #+operator-builder:field:name="resume.image.tag",type=string,default="latest"
+    app.kubernetes.io/version: latest
   annotations:
     #+operator-builder:field:name="certIssuer",type=string,default="letsencrypt-staging"
     cert-manager.io/cluster-issuer: letsencrypt-staging
 spec:
-  #+operator-builder:field:name="ingressClass",type=string,default="nginx"
-  ingressClassName: ngix
+  #+operator-builder:field:name=ingressClass,type=string,default="nginx"
+  ingressClassName: nginx
   tls:
     - hosts:
-      #+operator-builder:field:name=baseURL,type=string,default="example.com"
-      - example.com
+        #+operator-builder:field:name=baseURL,type=string,default="example.com"
+        - example.com
       secretName: resume-tls
   rules:
     - #+operator-builder:field:name=baseURL,type=string,default="example.com"
@@ -30,3 +37,10 @@ spec:
                 name: resume-svc
                 port:
                   number: 8080
+          - pathType: Prefix
+            path: /convert
+            backend:
+              service:
+                name: pdf-converter-svc
+                port:
+                  number: 3000

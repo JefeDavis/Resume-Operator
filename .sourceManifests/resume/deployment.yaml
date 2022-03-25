@@ -4,15 +4,24 @@ kind: Deployment
 metadata:
   name: resume
   labels:
-    resume.jefedavis.dev/candidate: johndoe
+    app.kubernetes.io/name: hugo
+    app.kubernetes.io/component: webfront
+    app.kubernetes.io/part-of: resume
+    app.kubernetes.io/instance: resume-johndoe
 spec:
   selector:
     matchLabels:
-      resume.jefedavis.dev/candidate: johndoe
+      app.kubernetes.io/name: hugo
+      app.kubernetes.io/component: webfront
+      app.kubernetes.io/part-of: resume
+      app.kubernetes.io/instance: resume-johndoe
   template:
     metadata:
       labels:
-        resume.jefedavis.dev/candidate: johndoe
+        app.kubernetes.io/name: hugo
+        app.kubernetes.io/component: webfront
+        app.kubernetes.io/part-of: resume
+        app.kubernetes.io/instance: resume-johndoe
     spec:
       containers:
         - name: resume

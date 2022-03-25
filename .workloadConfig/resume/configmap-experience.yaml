@@ -4,17 +4,27 @@ kind: ConfigMap
 metadata:
   name: resume-experience
   labels:
+    app.kubernetes.io/name: hugo
+    app.kubernetes.io/component: data
+    app.kubernetes.io/part-of: resume
     #+operator-builder:collection:field:name="profile.firstName",type=string,default="John",replace="john"
     #+operator-builder:collection:field:name="profile.lastName",type=string,default="Doe",replace="doe"
-    resume.jefedavis.dev/candidate: johndoe
+    app.kubernetes.io/instance: resume-johndoe
+    app.kubernetes.io/managed-by: resume-operator
+    app.kubernetes.io/created-by: resume-controller-manager
+    #+operator-builder:field:name="resume.image.tag",type=string,default="latest"
+    app.kubernetes.io/version: latest
+  annotations:
+    #+operator-builder:field:name="certIssuer",type=string,default="letsencrypt-staging"
+    cert-manager.io/cluster-issuer: letsencrypt-staging
 data:
   #+operator-builder:field:name=employer,type=string,replace=Employer
   #+operator-builder:field:name=location,type=string,replace=Location
   #+operator-builder:field:name=startDate,type=string,replace="2006-01-02"
   #+operator-builder:field:name=endDate,type=string,replace=Present
   #+operator-builder:field:name="position.title",type=string,replace=Title
-  #+operator-builder:field:name="position.startDate",default="",type=string,replace=StartDate1
-  #+operator-builder:field:name="position.endDate",default="",type=string,replace=EndDate1
+  #+operator-builder:field:name="position.startDate",default="",type=string,replace="2006-01-03"
+  #+operator-builder:field:name="position.endDate",default="",type=string,replace="2006-01-04"
   #+operator-builder:field:name="position.highlights",default="",type=string,replace=Highlights
   vmware.yaml: |-
     ---
@@ -24,6 +34,6 @@ data:
     endDate: Present
     positions:
       - title: Title
-        startDate: StartDate1
-        endDate: EndDate1
+        startDate: 2006-01-03
+        endDate: 2006-01-04
         highlights: Highlights

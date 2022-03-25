@@ -4,29 +4,49 @@ kind: Deployment
 metadata:
   name: resume
   labels:
+    app.kubernetes.io/name: hugo
+    app.kubernetes.io/component: webfront
+    app.kubernetes.io/part-of: resume
     #+operator-builder:collection:field:name="profile.firstName",type=string,default="John",replace="john"
     #+operator-builder:collection:field:name="profile.lastName",type=string,default="Doe",replace="doe"
-    resume.jefedavis.dev/candidate: johndoe
+    app.kubernetes.io/instance: resume-johndoe
+    app.kubernetes.io/managed-by: resume-operator
+    app.kubernetes.io/created-by: resume-controller-manager
+    #+operator-builder:field:name="resume.image.tag",type=string,default="latest"
+    app.kubernetes.io/version: latest
+  annotations:
+    #+operator-builder:field:name="certIssuer",type=string,default="letsencrypt-staging"
+    cert-manager.io/cluster-issuer: letsencrypt-staging
 spec:
   selector:
     matchLabels:
+      app.kubernetes.io/name: hugo
+      app.kubernetes.io/component: webfront
+      app.kubernetes.io/part-of: resume
       #+operator-builder:collection:field:name="profile.firstName",type=string,default="John",replace="john"
       #+operator-builder:collection:field:name="profile.lastName",type=string,default="Doe",replace="doe"
-      resume.jefedavis.dev/candidate: johndoe
+      app.kubernetes.io/instance: resume-johndoe
   template:
     metadata:
       labels:
+        app.kubernetes.io/name: hugo
+        app.kubernetes.io/component: webfront
+        app.kubernetes.io/part-of: resume
         #+operator-builder:collection:field:name="profile.firstName",type=string,default="John",replace="john"
         #+operator-builder:collection:field:name="profile.lastName",type=string,default="Doe",replace="doe"
-        resume.jefedavis.dev/candidate: johndoe
+        app.kubernetes.io/instance: resume-johndoe
+        app.kubernetes.io/managed-by: resume-operator
+        app.kubernetes.io/created-by: resume-controller-manager
+        #+operator-builder:field:name="resume.image.tag",type=string,default="latest"
+        app.kubernetes.io/version: latest
     spec:
       containers:
         - name: resume
-          #+operator-builder:field:name="image.registry",type=string,default="",replace="ghcr.io/"
-          #+operator-builder:field:name="image.name",type=string,default="jefedavis/resume",replace="jefedavis/resume"
-          #+operator-builder:field:name="image.tag",type=string,default="latest",replace="latest"
+          #+operator-builder:field:name="web.image.registry",type=string,default="",replace="ghcr.io/"
+          #+operator-builder:field:name="web.image.name",type=string,default="jefedavis/resume",replace="jefedavis/resume"
+          #+operator-builder:field:name="web.image.tag",type=string,default="latest",replace="latest"
           image: ghcr.io/jefedavis/resume:latest
-          #+operator-builder:field:name="image.pullPolicy",type=string,default="IfNotPresent"
+          #+operator-builder:field:name="web.image.pullPolicy",type=string,default="IfNotPresent"
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - mountPath: /site/data

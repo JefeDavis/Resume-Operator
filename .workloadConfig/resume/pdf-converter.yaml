@@ -1,0 +1,80 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pdf-converter
+  labels:
+    app.kubernetes.io/name: pdf
+    app.kubernetes.io/component: converter
+    #+operator-builder:collection:field:name="profile.firstName",type=string,default="John",replace="john"
+    #+operator-builder:collection:field:name="profile.lastName",type=string,default="Doe",replace="doe"
+    app.kubernetes.io/instance: resume-johndoe
+    app.kubernetes.io/managed-by: resume-operator
+    app.kubernetes.io/part-of: resume
+    app.kubernetes.io/created-by: resume-controller-manager
+    #+operator-builder:field:name="resume.image.tag",type=string,default="latest"
+    app.kubernetes.io/version: latest
+  annotations:
+    #+operator-builder:field:name="certIssuer",type=string,default="letsencrypt-staging"
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: pdf
+      app.kubernetes.io/component: converter
+      #+operator-builder:collection:field:name="profile.firstName",type=string,default="John",replace="john"
+      #+operator-builder:collection:field:name="profile.lastName",type=string,default="Doe",replace="doe"
+      app.kubernetes.io/instance: resume-johndoe
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: pdf
+        app.kubernetes.io/component: converter
+        #+operator-builder:collection:field:name="profile.firstName",type=string,default="John",replace="john"
+        #+operator-builder:collection:field:name="profile.lastName",type=string,default="Doe",replace="doe"
+        app.kubernetes.io/instance: resume-johndoe
+        app.kubernetes.io/managed-by: resume-operator
+        app.kubernetes.io/part-of: resume
+        app.kubernetes.io/created-by: resume-controller-manager
+        #+operator-builder:field:name="resume.image.tag",type=string,default="latest"
+        app.kubernetes.io/version: latest
+    spec:
+      containers:
+        - name: pdf-converter
+          #+operator-builder:field:name="pdf.image.registry",type=string,default="",replace="ghcr.io/"
+          #+operator-builder:field:name="pdf.image.name",type=string,default="jefedavis/resume",replace="jefedavis/resume-pdf-converter"
+          #+operator-builder:field:name="pdf.image.tag",type=string,default="latest",replace="latest"
+          image: ghcr.io/jefedavis/resume-pdf-converter:latest
+          ports:
+            - containerPort: 3000
+          #+operator-builder:field:name="pdf.image.pullPolicy",type=string,default="IfNotPresent"
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pdf-converter-svc
+  labels:
+    app.kubernetes.io/name: pdf
+    app.kubernetes.io/component: converter
+    #+operator-builder:collection:field:name="profile.firstName",type=string,default="John",replace="john"
+    #+operator-builder:collection:field:name="profile.lastName",type=string,default="Doe",replace="doe"
+    app.kubernetes.io/instance: resume-johndoe
+    app.kubernetes.io/managed-by: resume-operator
+    app.kubernetes.io/part-of: resume
+    app.kubernetes.io/created-by: resume-controller-manager
+    #+operator-builder:field:name="resume.image.tag",type=string,default="latest"
+    app.kubernetes.io/version: latest
+  annotations:
+    #+operator-builder:field:name="certIssuer",type=string,default="letsencrypt-staging"
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+spec:
+  selector:
+    app.kubernetes.io/name: pdf
+    app.kubernetes.io/component: converter
+    #+operator-builder:collection:field:name="profile.firstName",type=string,default="John",replace="john"
+    #+operator-builder:collection:field:name="profile.lastName",type=string,default="Doe",replace="doe"
+    app.kubernetes.io/instance: resume-johndoe
+  ports:
+    - port: 3000
+      targetPort: 3000

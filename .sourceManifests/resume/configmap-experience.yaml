@@ -4,7 +4,10 @@ kind: ConfigMap
 metadata:
   name: resume-experience
   labels:
-    resume.jefedavis.dev/candidate: johndoe
+    app.kubernetes.io/name: hugo
+    app.kubernetes.io/component: data
+    app.kubernetes.io/part-of: resume
+    app.kubernetes.io/instance: resume-johndoe
 data:
   vmware.yaml: |-
     ---
