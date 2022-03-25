@@ -15,7 +15,6 @@ data:
     enableRobotsTXT = true
     enableEmoji = true
 
-    theme = "resume"
     disableKinds = ["page", "section", "taxonomy", "term", "RSS", "sitemap"]
 
     baseURL = "https://example.com/"

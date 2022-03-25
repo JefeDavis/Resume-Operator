@@ -84,8 +84,13 @@ spec:
   certIssuer: letsencrypt-prod
   pageTitle: "Jeff Davis - CV"
   pageCount: "2"
-  image:
-    registry: ""
-    name: "jefedavis/resume"
-    tag: "latest"
-    pullPolicy: "Always"
+  web:
+    image:
+      registry: ""
+      name: "jefedavis/resume"
+      tag: "v0.1.0"
+  pdf:
+    image:
+      registry: ""
+      name: jefedavis/resume-pdf-converter
+      tag: "v0.1.0"

@@ -23,8 +23,8 @@ import (
 	resumesv1alpha1 "github.com/jefedavis/resume-operator/apis/resumes/v1alpha1"
 )
 
-// CreateServiceResumeService creates the resume-service Service resource.
-func CreateServiceResumeService(
+// CreateServiceResumeSvc creates the resume-svc Service resource.
+func CreateServiceResumeSvc(
 	parent *resumesv1alpha1.Profile,
 ) ([]client.Object, error) {
 	resourceObjs := []client.Object{}
@@ -34,12 +34,26 @@ func CreateServiceResumeService(
 			"kind":       "Service",
 			"metadata": map[string]interface{}{
 				"name": "resume-svc",
+				"labels": map[string]interface{}{
+					"app.kubernetes.io/name":      "hugo",
+					"app.kubernetes.io/component": "webfront",
+					"app.kubernetes.io/part-of":   "resume",
+					// controlled by field: profile.firstName
+					// controlled by field: profile.lastName
+					"app.kubernetes.io/instance":   "resume-" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
+					"app.kubernetes.io/managed-by": "resume-operator",
+					"app.kubernetes.io/created-by": "resume-controller-manager",
+					// controlled by field: web.image.tag
+					"app.kubernetes.io/version": parent.Spec.Web.Image.Tag,
+				},
 			},
 			"spec": map[string]interface{}{
 				"selector": map[string]interface{}{
+					"app.kubernetes.io/name":      "hugo",
+					"app.kubernetes.io/component": "webfront",
 					// controlled by field: profile.firstName
 					// controlled by field: profile.lastName
-					"resume.jefedavis.dev/candidate": "" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
+					"app.kubernetes.io/instance": "resume-" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
 				},
 				"ports": []interface{}{
 					map[string]interface{}{

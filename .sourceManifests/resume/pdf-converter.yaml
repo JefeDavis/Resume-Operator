@@ -22,6 +22,9 @@ spec:
       containers:
       - name: pdf-converter
         image: ghcr.io/jefedavis/resume-pdf-converter:latest
+        env:
+          - name: TARGET_URL
+            value: http://resume-svc:8080
         ports:
         - containerPort: 3000
 ---

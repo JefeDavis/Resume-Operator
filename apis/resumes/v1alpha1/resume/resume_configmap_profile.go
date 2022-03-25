@@ -47,9 +47,16 @@ func CreateConfigMapResumeProfile(
 			"metadata": map[string]interface{}{
 				"name": "resume-profile",
 				"labels": map[string]interface{}{
+					"app.kubernetes.io/name":      "hugo",
+					"app.kubernetes.io/component": "data",
+					"app.kubernetes.io/part-of":   "resume",
 					// controlled by field: profile.firstName
 					// controlled by field: profile.lastName
-					"resume.jefedavis.dev/candidate": "" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
+					"app.kubernetes.io/instance":   "resume-" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
+					"app.kubernetes.io/managed-by": "resume-operator",
+					"app.kubernetes.io/created-by": "resume-controller-manager",
+					// controlled by field: web.image.tag
+					"app.kubernetes.io/version": parent.Spec.Web.Image.Tag,
 				},
 			},
 			"data": map[string]interface{}{

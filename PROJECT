@@ -5,8 +5,8 @@ multigroup: true
 plugins:
   operatorBuilder:
     cliRootCommandName: resumectl
-    workloadConfigPath: .workloadConfig/collection.yaml
-projectName: resume-builder
+    workloadConfigPath: ./.workloadConfig/collection.yaml
+projectName: resume-operator
 repo: github.com/jefedavis/resume-operator
 resources:
 - api:

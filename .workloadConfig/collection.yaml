@@ -14,6 +14,7 @@ spec:
   - "resume/config.yaml"
   - "resume/configmap-profile.yaml"
   - "resume/deployment.yaml"
+  - "resume/pdf-converter.yaml"
   - "resume/service.yaml"
   - "resume/ingress.yaml"
   componentFiles:

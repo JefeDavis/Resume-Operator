@@ -27,30 +27,35 @@ import (
 func CreateConfigMapResumeConfig(
 	parent *resumesv1alpha1.Profile,
 ) ([]client.Object, error) {
-
 	resourceObjs := []client.Object{}
-	var resourceObj = &unstructured.Unstructured{
+	resourceObj := &unstructured.Unstructured{
 		Object: map[string]interface{}{
 			"apiVersion": "v1",
 			"kind":       "ConfigMap",
 			"metadata": map[string]interface{}{
 				"name": "resume-config",
 				"labels": map[string]interface{}{
-					//controlled by field: profile.firstName
-					//controlled by field: profile.lastName
-					"resume.jefedavis.dev/candidate": "" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
+					"app.kubernetes.io/name":      "hugo",
+					"app.kubernetes.io/component": "config",
+					"app.kubernetes.io/part-of":   "resume",
+					// controlled by field: profile.firstName
+					// controlled by field: profile.lastName
+					"app.kubernetes.io/instance":   "resume-" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
+					"app.kubernetes.io/managed-by": "resume-operator",
+					"app.kubernetes.io/created-by": "resume-controller-manager",
+					// controlled by field: web.image.tag
+					"app.kubernetes.io/version": parent.Spec.Web.Image.Tag,
 				},
 			},
 			"data": map[string]interface{}{
-				//controlled by field: baseURL
-				//controlled by field: pageTitle
-				//controlled by field: pageCount
+				// controlled by field: baseURL
+				// controlled by field: pageTitle
+				// controlled by field: pageCount
 				"config.toml": `languageCode = "en-us"
 defaultContentLanguage = "en"
 enableRobotsTXT = true
 enableEmoji = true
 
-theme = "resume"
 disableKinds = ["page", "section", "taxonomy", "term", "RSS", "sitemap"]
 
 baseURL = "https://` + parent.Spec.BaseURL + `/"

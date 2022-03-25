@@ -12,11 +12,8 @@ metadata:
     app.kubernetes.io/instance: resume-johndoe
     app.kubernetes.io/managed-by: resume-operator
     app.kubernetes.io/created-by: resume-controller-manager
-    #+operator-builder:field:name="resume.image.tag",type=string,default="latest"
+    #+operator-builder:collection:field:name="web.image.tag",type=string,default="latest"
     app.kubernetes.io/version: latest
-  annotations:
-    #+operator-builder:field:name="certIssuer",type=string,default="letsencrypt-staging"
-    cert-manager.io/cluster-issuer: letsencrypt-staging
 data:
   #+operator-builder:field:name="profile.firstName",type=string,default=John,replace=FirstName
   #+operator-builder:field:name="profile.lastName",type=string,default=Doe,replace=LastName

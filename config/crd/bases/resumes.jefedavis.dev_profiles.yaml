@@ -44,25 +44,6 @@ spec:
                 default: letsencrypt-staging
                 description: '(Default: "letsencrypt-staging")'
                 type: string
-              image:
-                properties:
-                  name:
-                    default: jefedavis/resume
-                    description: '(Default: "jefedavis/resume")'
-                    type: string
-                  pullPolicy:
-                    default: IfNotPresent
-                    description: '(Default: "IfNotPresent")'
-                    type: string
-                  registry:
-                    default: ""
-                    description: '(Default: "")'
-                    type: string
-                  tag:
-                    default: latest
-                    description: '(Default: "latest")'
-                    type: string
-                type: object
               ingressClass:
                 default: nginx
                 description: '(Default: "nginx")'
@@ -75,6 +56,28 @@ spec:
                 default: John Doe - CV
                 description: '(Default: "John Doe - CV")'
                 type: string
+              pdf:
+                properties:
+                  image:
+                    properties:
+                      name:
+                        default: jefedavis/resume
+                        description: '(Default: "jefedavis/resume")'
+                        type: string
+                      pullPolicy:
+                        default: IfNotPresent
+                        description: '(Default: "IfNotPresent")'
+                        type: string
+                      registry:
+                        default: ""
+                        description: '(Default: "")'
+                        type: string
+                      tag:
+                        default: latest
+                        description: '(Default: "latest")'
+                        type: string
+                    type: object
+                type: object
               profile:
                 properties:
                   coreCompetencies:
@@ -131,6 +134,28 @@ spec:
                           type: array
                       type: object
                     type: array
+                type: object
+              web:
+                properties:
+                  image:
+                    properties:
+                      name:
+                        default: jefedavis/resume
+                        description: '(Default: "jefedavis/resume")'
+                        type: string
+                      pullPolicy:
+                        default: IfNotPresent
+                        description: '(Default: "IfNotPresent")'
+                        type: string
+                      registry:
+                        default: ""
+                        description: '(Default: "")'
+                        type: string
+                      tag:
+                        default: latest
+                        description: '(Default: "latest")'
+                        type: string
+                    type: object
                 type: object
             type: object
           status:

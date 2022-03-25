@@ -12,7 +12,7 @@ commonOverlays:
       app.kubernetes.io/managed-by: resume-operator
       app.kubernetes.io/part-of: resume
       app.kubernetes.io/created-by: resume-controller-manager
-      #+operator-builder:field:name="resume.image.tag",type=string,default="latest"
+      #+operator-builder:collection:field:name="web.image.tag",type=string,default="latest"
       app.kubernetes.io/version: latest
 yamlFiles:
   - name: Add Markers to Profile
@@ -103,10 +103,7 @@ yamlFiles:
           #+operator-builder:field:name=ingressClass,type=string,default="nginx"
           ingressClassName: nginx
       - name: customize certIssuer
-        query: metadata
-        documentQuery:
-          - query: kind
-            value: Ingress
+        query: metadata[?($.kind=="Ingress")]
         value:
           annotations:
             #+operator-builder:field:name="certIssuer",type=string,default="letsencrypt-staging"

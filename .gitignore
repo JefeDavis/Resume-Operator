@@ -8,9 +8,6 @@
 bin
 testbin/*
 
-# Output from yot
-#.workloadConfig/resume*
-
 # Test binary, build with `go test -c`
 *.test
 

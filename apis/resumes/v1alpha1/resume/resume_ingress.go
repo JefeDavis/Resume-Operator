@@ -35,9 +35,16 @@ func CreateIngressResume(
 			"metadata": map[string]interface{}{
 				"name": "resume",
 				"labels": map[string]interface{}{
+					"app.kubernetes.io/name":      "hugo",
+					"app.kubernetes.io/component": "webfront",
+					"app.kubernetes.io/part-of":   "resume",
 					// controlled by field: profile.firstName
 					// controlled by field: profile.lastName
-					"resume.jefedavis.dev/candidate": "" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
+					"app.kubernetes.io/instance":   "resume-" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
+					"app.kubernetes.io/managed-by": "resume-operator",
+					"app.kubernetes.io/created-by": "resume-controller-manager",
+					// controlled by field: web.image.tag
+					"app.kubernetes.io/version": parent.Spec.Web.Image.Tag,
 				},
 				"annotations": map[string]interface{}{
 					// controlled by field: certIssuer
@@ -70,6 +77,18 @@ func CreateIngressResume(
 											"name": "resume-svc",
 											"port": map[string]interface{}{
 												"number": 8080,
+											},
+										},
+									},
+								},
+								map[string]interface{}{
+									"pathType": "Prefix",
+									"path":     "/convert",
+									"backend": map[string]interface{}{
+										"service": map[string]interface{}{
+											"name": "pdf-converter-svc",
+											"port": map[string]interface{}{
+												"number": 3000,
 											},
 										},
 									},

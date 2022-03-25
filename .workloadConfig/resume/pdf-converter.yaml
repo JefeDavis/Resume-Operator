@@ -12,11 +12,8 @@ metadata:
     app.kubernetes.io/managed-by: resume-operator
     app.kubernetes.io/part-of: resume
     app.kubernetes.io/created-by: resume-controller-manager
-    #+operator-builder:field:name="resume.image.tag",type=string,default="latest"
+    #+operator-builder:collection:field:name="web.image.tag",type=string,default="latest"
     app.kubernetes.io/version: latest
-  annotations:
-    #+operator-builder:field:name="certIssuer",type=string,default="letsencrypt-staging"
-    cert-manager.io/cluster-issuer: letsencrypt-staging
 spec:
   selector:
     matchLabels:
@@ -36,7 +33,7 @@ spec:
         app.kubernetes.io/managed-by: resume-operator
         app.kubernetes.io/part-of: resume
         app.kubernetes.io/created-by: resume-controller-manager
-        #+operator-builder:field:name="resume.image.tag",type=string,default="latest"
+        #+operator-builder:collection:field:name="web.image.tag",type=string,default="latest"
         app.kubernetes.io/version: latest
     spec:
       containers:
@@ -45,6 +42,9 @@ spec:
           #+operator-builder:field:name="pdf.image.name",type=string,default="jefedavis/resume",replace="jefedavis/resume-pdf-converter"
           #+operator-builder:field:name="pdf.image.tag",type=string,default="latest",replace="latest"
           image: ghcr.io/jefedavis/resume-pdf-converter:latest
+          env:
+          - name: TARGET_URL
+            value: http://resume-svc:8080
           ports:
             - containerPort: 3000
           #+operator-builder:field:name="pdf.image.pullPolicy",type=string,default="IfNotPresent"
@@ -63,11 +63,8 @@ metadata:
     app.kubernetes.io/managed-by: resume-operator
     app.kubernetes.io/part-of: resume
     app.kubernetes.io/created-by: resume-controller-manager
-    #+operator-builder:field:name="resume.image.tag",type=string,default="latest"
+    #+operator-builder:collection:field:name="web.image.tag",type=string,default="latest"
     app.kubernetes.io/version: latest
-  annotations:
-    #+operator-builder:field:name="certIssuer",type=string,default="letsencrypt-staging"
-    cert-manager.io/cluster-issuer: letsencrypt-staging
 spec:
   selector:
     app.kubernetes.io/name: pdf

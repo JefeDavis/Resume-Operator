@@ -12,11 +12,8 @@ metadata:
     app.kubernetes.io/instance: resume-johndoe
     app.kubernetes.io/managed-by: resume-operator
     app.kubernetes.io/created-by: resume-controller-manager
-    #+operator-builder:field:name="resume.image.tag",type=string,default="latest"
+    #+operator-builder:collection:field:name="web.image.tag",type=string,default="latest"
     app.kubernetes.io/version: latest
-  annotations:
-    #+operator-builder:field:name="certIssuer",type=string,default="letsencrypt-staging"
-    cert-manager.io/cluster-issuer: letsencrypt-staging
 data:
   #+operator-builder:field:name=baseURL,type=string,default="example.com",replace="example.com"
   #+operator-builder:field:name=pageTitle,type=string,default="John Doe - CV",replace="John Doe - CV"
@@ -27,7 +24,6 @@ data:
     enableRobotsTXT = true
     enableEmoji = true
 
-    theme = "resume"
     disableKinds = ["page", "section", "taxonomy", "term", "RSS", "sitemap"]
 
     baseURL = "https://example.com/"

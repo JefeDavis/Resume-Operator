@@ -36,10 +36,11 @@ metadata:
 spec:
   #collection:
     #name: "profile-sample"
-    #namespace: ""
+    #namespace: "default"
   title: "Title"
   issuer: "Issuer"
   earnedDate: "2006-01-02"
+  alias: "Alias"
   validationURL: ""
   imageURL: ""
 `
@@ -53,10 +54,11 @@ metadata:
 spec:
   #collection:
     #name: "profile-sample"
-    #namespace: ""
+    #namespace: "default"
   title: "Title"
   issuer: "Issuer"
   earnedDate: "2006-01-02"
+  alias: "Alias"
 `
 
 // Sample returns the sample manifest for this custom resource.
@@ -78,6 +80,7 @@ func Generate(
 
 	for _, f := range CreateFuncs {
 		resources, err := f(&workloadObj, &collectionObj)
+
 		if err != nil {
 			return nil, err
 		}

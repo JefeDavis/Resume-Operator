@@ -6,7 +6,7 @@ metadata:
 spec:
   #collection:
     #name: "profile-sample"
-    #namespace: ""
+    #namespace: "default"
   employer: "Employer"
   location: "Location"
   startDate: "2006-01-02"

@@ -19,8 +19,8 @@ package experience
 import (
 	"bytes"
 	"fmt"
-	"html/template"
 	"strings"
+	"text/template"
 
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -53,9 +53,16 @@ func CreateConfigMapResumeExperience(
 			"metadata": map[string]interface{}{
 				"name": "resume-experience",
 				"labels": map[string]interface{}{
+					"app.kubernetes.io/name":      "hugo",
+					"app.kubernetes.io/component": "data",
+					"app.kubernetes.io/part-of":   "resume",
 					// controlled by collection field: profile.firstName
 					// controlled by collection field: profile.lastName
-					"resume.jefedavis.dev/candidate": "" + collection.Spec.Profile.FirstName + "" + collection.Spec.Profile.LastName + "",
+					"app.kubernetes.io/instance":   "resume-" + collection.Spec.Profile.FirstName + "" + collection.Spec.Profile.LastName + "",
+					"app.kubernetes.io/managed-by": "resume-operator",
+					"app.kubernetes.io/created-by": "resume-controller-manager",
+					// controlled by collection field: web.image.tag
+					"app.kubernetes.io/version": collection.Spec.Web.Image.Tag,
 				},
 			},
 			"data": map[string]interface{}{

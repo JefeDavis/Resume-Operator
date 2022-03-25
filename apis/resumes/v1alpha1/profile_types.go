@@ -38,20 +38,13 @@ type ProfileSpec struct {
 	// +kubebuilder:validation:Optional
 	Profile ProfileSpecProfile `json:"profile,omitempty"`
 
+	// +kubebuilder:validation:Optional
+	Web ProfileSpecWeb `json:"web,omitempty"`
+
 	// +kubebuilder:default="example.com"
 	// +kubebuilder:validation:Optional
 	// (Default: "example.com")
 	BaseURL string `json:"baseURL,omitempty"`
-
-	// +kubebuilder:default="nginx"
-	// +kubebuilder:validation:Optional
-	// (Default: "nginx")
-	IngressClass string `json:"ingressClass,omitempty"`
-
-	// +kubebuilder:default="letsencrypt-staging"
-	// +kubebuilder:validation:Optional
-	// (Default: "letsencrypt-staging")
-	CertIssuer string `json:"certIssuer,omitempty"`
 
 	// +kubebuilder:default="John Doe - CV"
 	// +kubebuilder:validation:Optional
@@ -64,7 +57,17 @@ type ProfileSpec struct {
 	PageCount string `json:"pageCount,omitempty"`
 
 	// +kubebuilder:validation:Optional
-	Image ProfileSpecImage `json:"image,omitempty"`
+	Pdf ProfileSpecPdf `json:"pdf,omitempty"`
+
+	// +kubebuilder:default="letsencrypt-staging"
+	// +kubebuilder:validation:Optional
+	// (Default: "letsencrypt-staging")
+	CertIssuer string `json:"certIssuer,omitempty"`
+
+	// +kubebuilder:default="nginx"
+	// +kubebuilder:validation:Optional
+	// (Default: "nginx")
+	IngressClass string `json:"ingressClass,omitempty"`
 }
 
 type ProfileSpecProfile struct {
@@ -129,7 +132,39 @@ type ProfileSpecSkillFamily struct {
 	Items  []string `json:"items,omitempty"`
 }
 
-type ProfileSpecImage struct {
+type ProfileSpecWeb struct {
+	// +kubebuilder:validation:Optional
+	Image ProfileSpecWebImage `json:"image,omitempty"`
+}
+
+type ProfileSpecWebImage struct {
+	// +kubebuilder:default="latest"
+	// +kubebuilder:validation:Optional
+	// (Default: "latest")
+	Tag string `json:"tag,omitempty"`
+
+	// +kubebuilder:default=""
+	// +kubebuilder:validation:Optional
+	// (Default: "")
+	Registry string `json:"registry,omitempty"`
+
+	// +kubebuilder:default="jefedavis/resume"
+	// +kubebuilder:validation:Optional
+	// (Default: "jefedavis/resume")
+	Name string `json:"name,omitempty"`
+
+	// +kubebuilder:default="IfNotPresent"
+	// +kubebuilder:validation:Optional
+	// (Default: "IfNotPresent")
+	PullPolicy string `json:"pullPolicy,omitempty"`
+}
+
+type ProfileSpecPdf struct {
+	// +kubebuilder:validation:Optional
+	Image ProfileSpecPdfImage `json:"image,omitempty"`
+}
+
+type ProfileSpecPdfImage struct {
 	// +kubebuilder:default=""
 	// +kubebuilder:validation:Optional
 	// (Default: "")

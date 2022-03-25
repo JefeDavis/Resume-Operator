@@ -23,13 +23,20 @@ spec:
         items:
           - Git
           - Kubernetes
+  web:
+    image:
+      tag: "latest"
+      registry: ""
+      name: "jefedavis/resume"
+      pullPolicy: "IfNotPresent"
   baseURL: "example.com"
-  ingressClass: "nginx"
-  certIssuer: letsencrypt-staging
   pageTitle: "John Doe - CV"
   pageCount: "1"
-  image:
-    registry: ""
-    name: "jefedavis/resume"
-    tag: "latest"
-    pullPolicy: "IfNotPresent"
+  pdf:
+    image:
+      registry: ""
+      name: "jefedavis/resume"
+      tag: "latest"
+      pullPolicy: "IfNotPresent"
+  certIssuer: "letsencrypt-staging"
+  ingressClass: "nginx"

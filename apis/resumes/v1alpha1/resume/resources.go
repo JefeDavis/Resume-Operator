@@ -43,26 +43,26 @@ spec:
     githubURL: ""
     location: "South Carolina"
     overview: ""
-    coreCompetencies: 
-		  - Reading
-			- Writing
-		projects:
-		  - https://github.com/JefeDavis/Resume-Operator
-    skills:
-		  - family: Developer Tools
-			  items:
-				  - Git
-					- Kubernetes
+    coreCompetencies: ""
+    projects: ""
+    skills: ""
+  web:
+    image:
+      tag: "latest"
+      registry: ""
+      name: "jefedavis/resume"
+      pullPolicy: "IfNotPresent"
   baseURL: "example.com"
-	ingressClass: nginx
-	certIssuer: letsencrypt-staging
   pageTitle: "John Doe - CV"
   pageCount: "1"
-  image:
-    registry: ""
-    name: "jefedavis/resume"
-    tag: "latest"
-    pullPolicy: "IfNotPresent"
+  pdf:
+    image:
+      registry: ""
+      name: "jefedavis/resume"
+      tag: "latest"
+      pullPolicy: "IfNotPresent"
+  certIssuer: "letsencrypt-staging"
+  ingressClass: "nginx"
 `
 
 // sampleProfileRequired is a sample containing only required fields
@@ -124,7 +124,9 @@ var CreateFuncs = []func(
 	CreateConfigMapResumeConfig,
 	CreateConfigMapResumeProfile,
 	CreateDeploymentResume,
-	CreateServiceResumeService,
+	CreateDeploymentPdfConverter,
+	CreateServicePdfConverterSvc,
+	CreateServiceResumeSvc,
 	CreateIngressResume,
 }
 

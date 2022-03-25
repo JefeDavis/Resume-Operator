@@ -6,10 +6,10 @@ metadata:
 spec:
   #collection:
     #name: "profile-sample"
-    #namespace: ""
-  title: "VMware Certified Professional - DataCenter Virtualization"
-  issuer: "VMware"
+    #namespace: "default"
+  title: "Title"
+  issuer: "Issuer"
   earnedDate: "2006-01-02"
-  alias: "VCP-DCV"
+  alias: "Alias"
   validationURL: ""
   imageURL: ""
