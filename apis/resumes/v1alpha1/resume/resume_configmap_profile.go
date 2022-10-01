@@ -90,14 +90,22 @@ basicInfo:
   lastName: {{ .Spec.Profile.LastName }}
   photo: img/avatar.jpg
   contacts:
+    {{- if .Spec.Profile.PhoneNumber }}
     - icon: fa-solid fa-phone
       info: {{ .Spec.Profile.PhoneNumber }}
+    {{- end }}
+    {{- if .Spec.Profile.Email }}
     - icon: fa-solid fa-envelope
       info: {{ .Spec.Profile.Email }}
+    {{- end }}
+    {{- if .Spec.Profile.LinkedinURL }}
     - icon: fa-brands fa-linkedin
       info: {{ .Spec.Profile.LinkedinURL }}
+    {{- end }}
+    {{- if .Spec.Profile.GithubURL }}
     - icon: fa-brands fa-github
       info: {{ .Spec.Profile.GithubURL }}
+    {{- end }}
     - icon: fa-solid fa-map-marker-alt
       info: {{ .Spec.Profile.Location }}
 overview: {{ .Spec.Profile.Overview }}
