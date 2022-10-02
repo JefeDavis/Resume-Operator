@@ -3,7 +3,7 @@
 A Kubernetes operator built with
 [operator-builder](https://github.com/vmware-tanzu-labs/operator-builder).
 
-This respoistory and it's companion [Resume](https://github.com/JefeDavis/Resume) serves two purposes:
+This respository and it's companion [Resume](https://github.com/JefeDavis/Resume) serves two purposes:
 
 * Backup of my resume for rapid deployment and development
 * Showcasing some skills while I'm at it:
