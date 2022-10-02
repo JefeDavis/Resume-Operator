@@ -1,7 +1,7 @@
 # Resume-Operator - Jeff Davis - resume.jefedavis.dev
 
 A Kubernetes operator built with
-[operator-builder](https://github.com/vmware-tanzu-labs/operator-builder).
+[operator-builder](https://github.com/nukleros/operator-builder).
 
 This respository and it's companion [Resume](https://github.com/JefeDavis/Resume) serves two purposes:
 
@@ -24,7 +24,7 @@ I hate updating resumes, It's not so much writing the content that I dislike. In
 Now I can store all my expierence, certifications, skills, and projects in kubernetes manifests and let the code handle the rest. I work with Kubernetes and Kuberentes Operators quite a bit, why not practice what I preach? 
 
 ## OK, but is a Kubernetes Operator really necessary?
-Absolutely not, but it was a fun exercise and a neat talking point. Additionally with the other tools I've built and worked on  ([yot](github.com/vmware-tanzu-labs/yaml-overlay-tool) and [operator-builder](github.com/vmware-tanzu-labs/operator-builder)) I was able to create a fully functional operator in about 30 minutes.
+Absolutely not, but it was a fun exercise and a neat talking point. Additionally with the other tools I've built and worked on  ([yot](https://github.com/vmware-tanzu-labs/yaml-overlay-tool) and [operator-builder](https://github.com/nukleros/operator-builder)) I was able to create a fully functional operator in about 30 minutes.
 
 
 # K8s Architecture Overview
