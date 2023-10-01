@@ -93,6 +93,13 @@ func CreateDeploymentPdfConverter(
 								},
 								// controlled by field: pdf.image.pullPolicy
 								"imagePullPolicy": parent.Spec.Pdf.Image.PullPolicy,
+								"securityContext": map[string]interface{}{
+									"capabilities": map[string]interface{}{
+										"add": []interface{}{
+											"SYS_ADMIN",
+										},
+									},
+								},
 							},
 						},
 					},

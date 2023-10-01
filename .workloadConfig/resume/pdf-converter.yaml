@@ -49,6 +49,10 @@ spec:
             - containerPort: 3000
           #+operator-builder:field:name="pdf.image.pullPolicy",type=string,default="IfNotPresent"
           imagePullPolicy: IfNotPresent
+          securityContext:
+            capabilities:
+              add:
+                - "SYS_ADMIN"
 ---
 apiVersion: v1
 kind: Service
