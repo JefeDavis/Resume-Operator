@@ -27,6 +27,10 @@ spec:
         - name: resume
           image: ghcr.io/jefedavis/resume:latest
           imagePullPolicy: IfNotPresent
+          args:
+            - server
+            - --baseURL=https://example.com
+            - --appendPort=false
           volumeMounts:
             - mountPath: /site/data
               name: profile-mount

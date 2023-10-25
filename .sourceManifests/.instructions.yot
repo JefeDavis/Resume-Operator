@@ -77,6 +77,10 @@ yamlFiles:
           image: "%v"
           #+operator-builder:field:name="web.image.pullPolicy",type=string,default="IfNotPresent"
           imagePullPolicy: IfNotPresent
+          args:
+            - server
+            - --baseURL=https://example.com #+operator-builder:field:name=baseURL,type=string,default="example.com"
+            - --appendPort=false
       - name: Make resume image customizable
         query: ..containers[*][?(@.name == "pdf-converter")]
         value:

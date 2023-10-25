@@ -45,6 +45,10 @@ spec:
           image: ghcr.io/jefedavis/resume:latest
           #+operator-builder:field:name="web.image.pullPolicy",type=string,default="IfNotPresent"
           imagePullPolicy: IfNotPresent
+          args:
+            - server
+            - --baseURL=https://example.com #+operator-builder:field:name=baseURL,type=string,default="example.com"
+            - --appendPort=false
           volumeMounts:
             - mountPath: /site/data
               name: profile-mount

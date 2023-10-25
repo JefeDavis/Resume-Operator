@@ -83,6 +83,12 @@ func CreateDeploymentResume(
 								"image": "" + parent.Spec.Web.Image.Registry + "" + parent.Spec.Web.Image.Name + ":" + parent.Spec.Web.Image.Tag + "",
 								// controlled by field: web.image.pullPolicy
 								"imagePullPolicy": parent.Spec.Web.Image.PullPolicy,
+								"args": []interface{}{
+									"server",
+									// controlled by field: baseURL
+									"--baseURL=https://" + parent.Spec.BaseURL,
+									"--appendPort=false",
+								},
 								"volumeMounts": []interface{}{
 									map[string]interface{}{
 										"mountPath": "/site/data",
