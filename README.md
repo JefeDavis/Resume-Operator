@@ -78,3 +78,7 @@ The CLI binary will get saved to the bin directory.  You can see the help
 message with:
 
     ./bin/resumectl help
+
+## 🔗 相关工具 / Related tools
+
+- [简历大师 Resume Master](https://markmiller1.github.io/resume-master/) — 免费、纯前端、隐私优先的简历生成器，64 套模板 + 面试/谈薪指南，数据不出本机
