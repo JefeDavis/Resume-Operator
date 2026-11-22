@@ -14,11 +14,14 @@ metadata:
     app.kubernetes.io/created-by: resume-controller-manager
     #+operator-builder:collection:field:name="web.image.tag",type=string,default="latest"
     app.kubernetes.io/version: latest
+  # NOTE: Ingress class, annotations (incl. the cert-manager issuer), and labels
+  # are now configured through spec.ingress on the Profile, a structured block
+  # that operator-builder scalar markers cannot express. The Go resource
+  # generator apis/.../resume/resume_ingress.go is the source of truth, and an
+  # alternative Gateway API route is produced by resume_route.go (spec.route).
   annotations:
-    #+operator-builder:field:name="certIssuer",type=string,default="letsencrypt-staging"
     cert-manager.io/cluster-issuer: letsencrypt-staging
 spec:
-  #+operator-builder:field:name=ingressClass,type=string,default="nginx"
   ingressClassName: nginx
   tls:
     - hosts:

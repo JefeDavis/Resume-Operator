@@ -52,10 +52,10 @@ func CreateRouteResume(
 	}
 
 	labels := map[string]interface{}{
-		"app.kubernetes.io/name":      "hugo",
-		"app.kubernetes.io/component": "webfront",
-		"app.kubernetes.io/part-of":   "resume",
-		"app.kubernetes.io/instance":  "resume-" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
+		"app.kubernetes.io/name":       "hugo",
+		"app.kubernetes.io/component":  "webfront",
+		"app.kubernetes.io/part-of":    "resume",
+		"app.kubernetes.io/instance":   "resume-" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
 		"app.kubernetes.io/managed-by": "resume-operator",
 		"app.kubernetes.io/created-by": "resume-controller-manager",
 		"app.kubernetes.io/version":    parent.Spec.Web.Image.Tag,

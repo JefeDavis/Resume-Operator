@@ -30,6 +30,70 @@ Absolutely not, but it was a fun exercise and a neat talking point. Additionally
 # K8s Architecture Overview
 ![](./resume-operator.png)
 
+## Configuration
+
+The `Profile` custom resource drives everything. Beyond the resume content
+(`profile`, `web`, `pdf`, `baseURL`, `pageTitle`, `pageCount`), the following
+deployment and networking options are supported:
+
+### Networking: Ingress or Route
+
+Exposure is configured with one of two mutually exclusive blocks. If `route` is
+set it takes precedence and no Ingress is created; otherwise an Ingress is used
+(the default).
+
+```yaml
+spec:
+  # Option A (default): Ingress
+  ingress:
+    className: nginx                 # defaults to nginx
+    annotations:                     # free-form; put the cert-manager issuer here
+      cert-manager.io/cluster-issuer: letsencrypt-staging
+    labels:
+      team: platform
+
+  # Option B: Gateway API route (e.g. HTTPRoute). Requires the Gateway API CRDs
+  # and a Gateway installed in the cluster.
+  route:
+    apiVersion: gateway.networking.k8s.io/v1   # defaults shown
+    kind: HTTPRoute
+    hostname: example.com            # defaults to spec.baseURL
+    parentRefs:
+      - name: public-gateway
+        namespace: gateway-system
+        sectionName: https
+    annotations: {}
+    labels: {}
+```
+
+The route sends `/` to the resume site and `/convert` to the PDF converter,
+matching the Ingress path layout.
+
+### Pod labels, annotations, and security contexts
+
+```yaml
+spec:
+  podLabels:                         # merged into both pod templates
+    example.com/team: platform
+  podAnnotations:                    # added to both pod templates
+    example.com/scrape: "true"
+  podSecurityContext:                # pod-level, applied to both deployments
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:                   # container-level, applied to the resume container
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop: ["ALL"]
+```
+
+The pod-level `podSecurityContext` is applied to both the resume and
+pdf-converter pods. The container-level `securityContext` is applied only to the
+resume container; the pdf-converter keeps its required `SYS_ADMIN` capability.
+
+See [`config/samples`](./config/samples) for complete Ingress and Route examples.
+
 ## Local Development & Testing
 
 To install the custom resource/s for this operator, make sure you have a
