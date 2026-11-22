@@ -50,7 +50,7 @@ func getJobExperienceManifest(i *cmdinit.InitSubCommand) (string, error) {
 	}
 
 	// return an error if we did not find a manifest for an api version
-	return "", fmt.Errorf("unsupported API Version: " + apiVersion)
+	return "", fmt.Errorf("unsupported API Version: %s", apiVersion)
 }
 
 // NewJobExperienceSubCommand creates a new command and adds it to its

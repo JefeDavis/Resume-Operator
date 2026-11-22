@@ -1,27 +1,14 @@
-
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  creationTimestamp: null
   name: manager-role
 rules:
-- apiGroups:
-  - apps
-  resources:
-  - deployments
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
 - apiGroups:
   - ""
   resources:
   - configmaps
+  - services
   verbs:
   - create
   - delete
@@ -38,9 +25,9 @@ rules:
   - list
   - watch
 - apiGroups:
-  - ""
+  - apps
   resources:
-  - services
+  - deployments
   verbs:
   - create
   - delete
@@ -65,45 +52,7 @@ rules:
   - resumes.jefedavis.dev
   resources:
   - certifications
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - resumes.jefedavis.dev
-  resources:
-  - certifications/status
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - resumes.jefedavis.dev
-  resources:
   - jobexperiences
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - resumes.jefedavis.dev
-  resources:
-  - jobexperiences/status
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - resumes.jefedavis.dev
-  resources:
   - profiles
   verbs:
   - create
@@ -116,6 +65,8 @@ rules:
 - apiGroups:
   - resumes.jefedavis.dev
   resources:
+  - certifications/status
+  - jobexperiences/status
   - profiles/status
   verbs:
   - get

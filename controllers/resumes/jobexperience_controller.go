@@ -29,12 +29,13 @@ import (
 	"github.com/nukleros/operator-builder-tools/pkg/resources"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
-	"k8s.io/client-go/tools/record"
+	"k8s.io/client-go/tools/events"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
+	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
@@ -50,18 +51,20 @@ type JobExperienceReconciler struct {
 	client.Client
 	Name         string
 	Log          logr.Logger
+	Manager      manager.Manager
 	Controller   controller.Controller
-	Events       record.EventRecorder
+	Events       events.EventRecorder
 	FieldManager string
 	Watches      []client.Object
 	Phases       *phases.Registry
 }
 
-func NewJobExperienceReconciler(mgr ctrl.Manager) *JobExperienceReconciler {
+func NewJobExperienceReconciler(mgr ctrl.Manager, recorder events.EventRecorder) *JobExperienceReconciler {
 	return &JobExperienceReconciler{
 		Name:         "JobExperience",
 		Client:       mgr.GetClient(),
-		Events:       mgr.GetEventRecorderFor("JobExperience-Controller"),
+		Manager:      mgr,
+		Events:       recorder,
 		FieldManager: "JobExperience-reconciler",
 		Log:          ctrl.Log.WithName("controllers").WithName("resumes").WithName("JobExperience"),
 		Watches:      []client.Object{},
@@ -204,7 +207,7 @@ func (r *JobExperienceReconciler) EnqueueRequestOnCollectionChange(req *workload
 	}
 
 	// create a function which maps this specific reconcile request
-	mapFn := func(collection client.Object) []reconcile.Request {
+	mapFn := func(_ context.Context, collection client.Object) []reconcile.Request {
 		return []reconcile.Request{
 			{
 				NamespacedName: types.NamespacedName{
@@ -216,8 +219,9 @@ func (r *JobExperienceReconciler) EnqueueRequestOnCollectionChange(req *workload
 	}
 
 	// watch the collection and use our map function to enqueue the request
-	if err := r.Controller.Watch(
-		&source.Kind{Type: req.Collection},
+	syncingSource := source.Kind(
+		r.GetManager().GetCache(),
+		client.Object(req.Collection),
 		handler.EnqueueRequestsFromMapFunc(mapFn),
 		predicate.Funcs{
 			UpdateFunc: func(e event.UpdateEvent) bool {
@@ -237,7 +241,9 @@ func (r *JobExperienceReconciler) EnqueueRequestOnCollectionChange(req *workload
 				return false
 			},
 		},
-	); err != nil {
+	)
+
+	if err := r.Controller.Watch(syncingSource); err != nil {
 		return err
 	}
 
@@ -279,8 +285,13 @@ func (r *JobExperienceReconciler) GetResources(req *workload.Request) ([]client.
 }
 
 // GetEventRecorder returns the event recorder for writing kubernetes events.
-func (r *JobExperienceReconciler) GetEventRecorder() record.EventRecorder {
+func (r *JobExperienceReconciler) GetEventRecorder() events.EventRecorder {
 	return r.Events
+}
+
+// GetManager returns the controller manager associated with the reconciler.
+func (r *JobExperienceReconciler) GetManager() manager.Manager {
+	return r.Manager
 }
 
 // GetFieldManager returns the name of the field manager for the controller.

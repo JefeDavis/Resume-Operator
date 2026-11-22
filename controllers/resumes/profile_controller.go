@@ -25,10 +25,11 @@ import (
 	"github.com/nukleros/operator-builder-tools/pkg/controller/predicates"
 	"github.com/nukleros/operator-builder-tools/pkg/controller/workload"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
-	"k8s.io/client-go/tools/record"
+	"k8s.io/client-go/tools/events"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
+	"sigs.k8s.io/controller-runtime/pkg/manager"
 
 	resumesv1alpha1 "github.com/jefedavis/resume-operator/apis/resumes/v1alpha1"
 	"github.com/jefedavis/resume-operator/apis/resumes/v1alpha1/resume"
@@ -41,18 +42,20 @@ type ProfileReconciler struct {
 	client.Client
 	Name         string
 	Log          logr.Logger
+	Manager      manager.Manager
 	Controller   controller.Controller
-	Events       record.EventRecorder
+	Events       events.EventRecorder
 	FieldManager string
 	Watches      []client.Object
 	Phases       *phases.Registry
 }
 
-func NewProfileReconciler(mgr ctrl.Manager) *ProfileReconciler {
+func NewProfileReconciler(mgr ctrl.Manager, recorder events.EventRecorder) *ProfileReconciler {
 	return &ProfileReconciler{
 		Name:         "Profile",
 		Client:       mgr.GetClient(),
-		Events:       mgr.GetEventRecorderFor("Profile-Controller"),
+		Manager:      mgr,
+		Events:       recorder,
 		FieldManager: "Profile-reconciler",
 		Log:          ctrl.Log.WithName("controllers").WithName("resumes").WithName("Profile"),
 		Watches:      []client.Object{},
@@ -162,8 +165,13 @@ func (r *ProfileReconciler) GetResources(req *workload.Request) ([]client.Object
 }
 
 // GetEventRecorder returns the event recorder for writing kubernetes events.
-func (r *ProfileReconciler) GetEventRecorder() record.EventRecorder {
+func (r *ProfileReconciler) GetEventRecorder() events.EventRecorder {
 	return r.Events
+}
+
+// GetManager returns the controller manager associated with the reconciler.
+func (r *ProfileReconciler) GetManager() manager.Manager {
+	return r.Manager
 }
 
 // GetFieldManager returns the name of the field manager for the controller.

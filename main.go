@@ -26,11 +26,14 @@ import (
 
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
+	"k8s.io/client-go/kubernetes"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/events"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 
 	resumesv1alpha1 "github.com/jefedavis/resume-operator/apis/resumes/v1alpha1"
 	resumescontrollers "github.com/jefedavis/resume-operator/controllers/resumes"
@@ -84,8 +87,7 @@ func main() {
 
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:                 scheme,
-		MetricsBindAddress:     metricsAddr,
-		Port:                   9443,
+		Metrics:                metricsserver.Options{BindAddress: metricsAddr},
 		HealthProbeBindAddress: probeAddr,
 		LeaderElection:         enableLeaderElection,
 		LeaderElectionID:       "0edb8fc4.jefedavis.dev",
@@ -95,10 +97,27 @@ func main() {
 		os.Exit(1)
 	}
 
+	ctx := ctrl.SetupSignalHandler()
+
+	// Build an events.EventRecorder (client-go events API) as required by
+	// operator-builder-tools. The controller-runtime manager only exposes the
+	// legacy record.EventRecorder, so we wire up the newer broadcaster here.
+	clientset, err := kubernetes.NewForConfig(mgr.GetConfig())
+	if err != nil {
+		setupLog.Error(err, "unable to create clientset for event recorder")
+		os.Exit(1)
+	}
+
+	eventBroadcaster := events.NewEventBroadcasterAdapter(clientset)
+	eventBroadcaster.StartRecordingToSink(ctx.Done())
+	defer eventBroadcaster.Shutdown()
+
+	recorder := eventBroadcaster.NewRecorder("resume-operator")
+
 	reconcilers := []ReconcilerInitializer{
-		resumescontrollers.NewProfileReconciler(mgr),
-		resumescontrollers.NewJobExperienceReconciler(mgr),
-		resumescontrollers.NewCertificationReconciler(mgr),
+		resumescontrollers.NewProfileReconciler(mgr, recorder),
+		resumescontrollers.NewJobExperienceReconciler(mgr, recorder),
+		resumescontrollers.NewCertificationReconciler(mgr, recorder),
 		//+kubebuilder:scaffold:reconcilers
 	}
 
@@ -121,7 +140,7 @@ func main() {
 
 	setupLog.Info("starting manager")
 
-	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
+	if err := mgr.Start(ctx); err != nil {
 		setupLog.Error(err, "problem running manager")
 		os.Exit(1)
 	}
