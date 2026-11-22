@@ -110,6 +110,12 @@ func CreateDeploymentPdfConverter(
 
 	resourceObj.SetNamespace(parent.Namespace)
 
+	// inject pod labels/annotations and podSecurityContext; leave the container
+	// securityContext alone so the pdf-converter keeps its SYS_ADMIN capability.
+	if err := applyPodCustomizations(parent, resourceObj, "pdf-converter", nil); err != nil {
+		return nil, err
+	}
+
 	resourceObjs = append(resourceObjs, resourceObj)
 
 	return resourceObjs, nil

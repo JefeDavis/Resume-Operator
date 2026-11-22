@@ -144,6 +144,12 @@ func CreateDeploymentResume(
 
 	resourceObj.SetNamespace(parent.Namespace)
 
+	// inject pod labels/annotations, podSecurityContext, and the resume
+	// container securityContext from the Profile spec.
+	if err := applyPodCustomizations(parent, resourceObj, "resume", parent.Spec.SecurityContext); err != nil {
+		return nil, err
+	}
+
 	resourceObjs = append(resourceObjs, resourceObj)
 
 	return resourceObjs, nil

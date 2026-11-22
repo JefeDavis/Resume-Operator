@@ -21,6 +21,7 @@ import (
 
 	"github.com/nukleros/operator-builder-tools/pkg/controller/workload"
 	"github.com/nukleros/operator-builder-tools/pkg/status"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
@@ -59,15 +60,117 @@ type ProfileSpec struct {
 	// +kubebuilder:validation:Optional
 	Pdf ProfileSpecPdf `json:"pdf,omitempty"`
 
-	// +kubebuilder:default="letsencrypt-staging"
+	// PodLabels are additional labels applied to the pod templates of the
+	// resume and pdf-converter deployments.
 	// +kubebuilder:validation:Optional
-	// (Default: "letsencrypt-staging")
-	CertIssuer string `json:"certIssuer,omitempty"`
+	PodLabels map[string]string `json:"podLabels,omitempty"`
 
+	// PodAnnotations are additional annotations applied to the pod templates
+	// of the resume and pdf-converter deployments.
+	// +kubebuilder:validation:Optional
+	PodAnnotations map[string]string `json:"podAnnotations,omitempty"`
+
+	// SecurityContext is the container-level security context applied to the
+	// resume container.
+	// +kubebuilder:validation:Optional
+	SecurityContext *corev1.SecurityContext `json:"securityContext,omitempty"`
+
+	// PodSecurityContext is the pod-level security context applied to the
+	// resume and pdf-converter pod templates.
+	// +kubebuilder:validation:Optional
+	PodSecurityContext *corev1.PodSecurityContext `json:"podSecurityContext,omitempty"`
+
+	// Ingress configures an Ingress for the resume site. It is used when Route
+	// is not set. When omitted, a default nginx Ingress is created.
+	// +kubebuilder:validation:Optional
+	Ingress *ProfileSpecIngress `json:"ingress,omitempty"`
+
+	// Route configures a Gateway API route (e.g. HTTPRoute) for the resume
+	// site as an alternative to Ingress. When set, it takes precedence over
+	// Ingress and no Ingress is created.
+	// +kubebuilder:validation:Optional
+	Route *ProfileSpecRoute `json:"route,omitempty"`
+}
+
+// ProfileSpecIngress configures the Ingress resource for the resume site.
+type ProfileSpecIngress struct {
+	// ClassName sets spec.ingressClassName on the Ingress.
 	// +kubebuilder:default="nginx"
 	// +kubebuilder:validation:Optional
 	// (Default: "nginx")
-	IngressClass string `json:"ingressClass,omitempty"`
+	ClassName string `json:"className,omitempty"`
+
+	// Annotations are added to the Ingress metadata. Supply controller-specific
+	// settings here, e.g. cert-manager.io/cluster-issuer: letsencrypt-staging.
+	// +kubebuilder:validation:Optional
+	Annotations map[string]string `json:"annotations,omitempty"`
+
+	// Labels are added to the Ingress metadata.
+	// +kubebuilder:validation:Optional
+	Labels map[string]string `json:"labels,omitempty"`
+}
+
+// ProfileSpecRoute configures a Gateway API route (HTTPRoute by default) for
+// the resume site.
+type ProfileSpecRoute struct {
+	// APIVersion of the route resource to create.
+	// +kubebuilder:default="gateway.networking.k8s.io/v1"
+	// +kubebuilder:validation:Optional
+	// (Default: "gateway.networking.k8s.io/v1")
+	APIVersion string `json:"apiVersion,omitempty"`
+
+	// Kind of the route resource to create.
+	// +kubebuilder:default="HTTPRoute"
+	// +kubebuilder:validation:Optional
+	// (Default: "HTTPRoute")
+	Kind string `json:"kind,omitempty"`
+
+	// ParentRefs reference the Gateway(s) the route attaches to.
+	// +kubebuilder:validation:Optional
+	ParentRefs []ProfileSpecRouteParentRef `json:"parentRefs,omitempty"`
+
+	// Hostname the route matches. Defaults to spec.baseURL when empty.
+	// +kubebuilder:validation:Optional
+	Hostname string `json:"hostname,omitempty"`
+
+	// Annotations are added to the route metadata.
+	// +kubebuilder:validation:Optional
+	Annotations map[string]string `json:"annotations,omitempty"`
+
+	// Labels are added to the route metadata.
+	// +kubebuilder:validation:Optional
+	Labels map[string]string `json:"labels,omitempty"`
+}
+
+// ProfileSpecRouteParentRef references a Gateway that a route attaches to.
+type ProfileSpecRouteParentRef struct {
+	// Name of the referenced Gateway.
+	// +kubebuilder:validation:Required
+	Name string `json:"name"`
+
+	// Namespace of the referenced Gateway. Defaults to the Profile namespace.
+	// +kubebuilder:validation:Optional
+	Namespace string `json:"namespace,omitempty"`
+
+	// SectionName of the Gateway listener to attach to.
+	// +kubebuilder:validation:Optional
+	SectionName string `json:"sectionName,omitempty"`
+
+	// Port of the Gateway listener to attach to.
+	// +kubebuilder:validation:Optional
+	Port int32 `json:"port,omitempty"`
+
+	// Group of the referenced parent resource.
+	// +kubebuilder:default="gateway.networking.k8s.io"
+	// +kubebuilder:validation:Optional
+	// (Default: "gateway.networking.k8s.io")
+	Group string `json:"group,omitempty"`
+
+	// Kind of the referenced parent resource.
+	// +kubebuilder:default="Gateway"
+	// +kubebuilder:validation:Optional
+	// (Default: "Gateway")
+	Kind string `json:"kind,omitempty"`
 }
 
 type ProfileSpecProfile struct {

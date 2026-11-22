@@ -38,5 +38,21 @@ spec:
       name: "jefedavis/resume"
       tag: "latest"
       pullPolicy: "IfNotPresent"
-  certIssuer: "letsencrypt-staging"
-  ingressClass: "nginx"
+  podLabels:
+    example.com/team: platform
+  podAnnotations:
+    example.com/scrape: "true"
+  podSecurityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+  ingress:
+    className: "nginx"
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-staging

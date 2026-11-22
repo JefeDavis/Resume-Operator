@@ -61,8 +61,33 @@ spec:
       name: "jefedavis/resume"
       tag: "latest"
       pullPolicy: "IfNotPresent"
-  certIssuer: "letsencrypt-staging"
-  ingressClass: "nginx"
+  podLabels:
+    example.com/team: platform
+  podAnnotations:
+    example.com/scrape: "true"
+  podSecurityContext:
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  securityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop:
+        - ALL
+  # Use either "ingress" (default) or "route" for exposure.
+  ingress:
+    className: "nginx"
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-staging
+  # route:
+  #   apiVersion: gateway.networking.k8s.io/v1
+  #   kind: HTTPRoute
+  #   hostname: example.com
+  #   parentRefs:
+  #     - name: public-gateway
+  #       namespace: gateway-system
+  #       sectionName: https
 `
 
 // sampleProfileRequired is a sample containing only required fields
@@ -128,6 +153,7 @@ var CreateFuncs = []func(
 	CreateServicePdfConverterSvc,
 	CreateServiceResumeSvc,
 	CreateIngressResume,
+	CreateRouteResume,
 }
 
 // InitFuncs is an array of functions that are called prior to starting the controller manager.  This is
