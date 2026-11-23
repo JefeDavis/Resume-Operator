@@ -80,16 +80,16 @@ spec:
                   image:
                     properties:
                       name:
-                        default: jefedavis/resume
-                        description: '(Default: "jefedavis/resume")'
+                        default: jefedavis/resume-pdf-converter
+                        description: '(Default: "jefedavis/resume-pdf-converter")'
                         type: string
                       pullPolicy:
                         default: IfNotPresent
                         description: '(Default: "IfNotPresent")'
                         type: string
                       registry:
-                        default: ""
-                        description: '(Default: "")'
+                        default: ghcr.io/
+                        description: '(Default: "ghcr.io/")'
                         type: string
                       tag:
                         default: latest
@@ -677,8 +677,8 @@ spec:
                         description: '(Default: "IfNotPresent")'
                         type: string
                       registry:
-                        default: ""
-                        description: '(Default: "")'
+                        default: ghcr.io/
+                        description: '(Default: "ghcr.io/")'
                         type: string
                       tag:
                         default: latest

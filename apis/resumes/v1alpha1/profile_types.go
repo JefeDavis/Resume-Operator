@@ -246,9 +246,9 @@ type ProfileSpecWebImage struct {
 	// (Default: "latest")
 	Tag string `json:"tag,omitempty"`
 
-	// +kubebuilder:default=""
+	// +kubebuilder:default="ghcr.io/"
 	// +kubebuilder:validation:Optional
-	// (Default: "")
+	// (Default: "ghcr.io/")
 	Registry string `json:"registry,omitempty"`
 
 	// +kubebuilder:default="jefedavis/resume"
@@ -268,14 +268,14 @@ type ProfileSpecPdf struct {
 }
 
 type ProfileSpecPdfImage struct {
-	// +kubebuilder:default=""
+	// +kubebuilder:default="ghcr.io/"
 	// +kubebuilder:validation:Optional
-	// (Default: "")
+	// (Default: "ghcr.io/")
 	Registry string `json:"registry,omitempty"`
 
-	// +kubebuilder:default="jefedavis/resume"
+	// +kubebuilder:default="jefedavis/resume-pdf-converter"
 	// +kubebuilder:validation:Optional
-	// (Default: "jefedavis/resume")
+	// (Default: "jefedavis/resume-pdf-converter")
 	Name string `json:"name,omitempty"`
 
 	// +kubebuilder:default="latest"
