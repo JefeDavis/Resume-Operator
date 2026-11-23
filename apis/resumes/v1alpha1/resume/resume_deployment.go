@@ -83,11 +83,21 @@ func CreateDeploymentResume(
 								"image": imageRef(parent.Spec.Web.Image.Registry, parent.Spec.Web.Image.Name, parent.Spec.Web.Image.Tag),
 								// controlled by field: web.image.pullPolicy
 								"imagePullPolicy": parent.Spec.Web.Image.PullPolicy,
+								// The operator owns the full Hugo server command.
+								// --noBuildLock/--renderToMemory (with HUGO_CACHEDIR and
+								// HUGO_RESOURCEDIR pointed under /tmp in the image) let Hugo
+								// run under a read-only root filesystem.
 								"args": []any{
 									"server",
 									// controlled by field: baseURL
 									"--baseURL=https://" + parent.Spec.BaseURL,
 									"--appendPort=false",
+									"--source=/site",
+									"--bind=0.0.0.0",
+									"--disableFastRender",
+									"--poll=2s",
+									"--noBuildLock",
+									"--renderToMemory",
 								},
 								"volumeMounts": []any{
 									map[string]any{
