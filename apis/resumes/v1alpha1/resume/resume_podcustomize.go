@@ -32,7 +32,7 @@ import (
 //
 // containerSecurityContext is applied to the container named containerName when
 // non-nil. Pass nil to leave container security contexts untouched (e.g. the
-// pdf-converter keeps its required SYS_ADMIN capability).
+// pdf-converter keeps its own hardened defaults).
 func applyPodCustomizations(
 	parent *resumesv1alpha1.Profile,
 	deployment *unstructured.Unstructured,

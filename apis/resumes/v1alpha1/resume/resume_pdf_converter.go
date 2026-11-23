@@ -93,11 +93,19 @@ func CreateDeploymentPdfConverter(
 								},
 								// controlled by field: pdf.image.pullPolicy
 								"imagePullPolicy": parent.Spec.Pdf.Image.PullPolicy,
+								// The converter drives headless Chrome with --no-sandbox
+								// (see the resume-pdf-converter image), so it no longer needs
+								// the SYS_ADMIN capability. Harden the container instead.
 								"securityContext": map[string]interface{}{
+									"runAsNonRoot":             true,
+									"allowPrivilegeEscalation": false,
 									"capabilities": map[string]interface{}{
-										"add": []interface{}{
-											"SYS_ADMIN",
+										"drop": []interface{}{
+											"ALL",
 										},
+									},
+									"seccompProfile": map[string]interface{}{
+										"type": "RuntimeDefault",
 									},
 								},
 							},
@@ -111,7 +119,7 @@ func CreateDeploymentPdfConverter(
 	resourceObj.SetNamespace(parent.Namespace)
 
 	// inject pod labels/annotations and podSecurityContext; leave the container
-	// securityContext alone so the pdf-converter keeps its SYS_ADMIN capability.
+	// securityContext alone so the pdf-converter keeps its hardened defaults.
 	if err := applyPodCustomizations(parent, resourceObj, "pdf-converter", nil); err != nil {
 		return nil, err
 	}
