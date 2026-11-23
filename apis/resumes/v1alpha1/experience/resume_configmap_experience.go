@@ -19,7 +19,6 @@ package experience
 import (
 	"bytes"
 	"fmt"
-	"strings"
 	"text/template"
 
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -28,30 +27,45 @@ import (
 	resumesv1alpha1 "github.com/jefedavis/resume-operator/apis/resumes/v1alpha1"
 )
 
-// CreateConfigMapResumeExperience creates the resume-experience ConfigMap resource.
-func CreateConfigMapResumeExperience(
-	parent *resumesv1alpha1.JobExperience,
+// experienceEntry renders a single job experience's YAML document for the Hugo
+// data file.
+func experienceEntry(exp *resumesv1alpha1.JobExperience) (string, error) {
+	var buf bytes.Buffer
+
+	tmpl, err := template.New("Experience").Parse(experienceTemplate)
+	if err != nil {
+		return "", fmt.Errorf("unable to parse experience template, %w", err)
+	}
+
+	if err := tmpl.Execute(&buf, *exp); err != nil {
+		return "", fmt.Errorf("unable to scaffold experience yaml for ConfigMap, %w", err)
+	}
+
+	return buf.String(), nil
+}
+
+// AggregateConfigMapResumeExperience builds the resume-experience ConfigMap from
+// all job experiences belonging to the collection. The collection (Profile) owns
+// the ConfigMap, so there is a single stable owner instead of each experience
+// fighting over the owner reference. Each experience is keyed by its resource
+// name, which is always set and unique within the namespace.
+func AggregateConfigMapResumeExperience(
 	collection *resumesv1alpha1.Profile,
-) ([]client.Object, error) {
-	fileName := strings.ReplaceAll(parent.Spec.Employer, " ", "-")
-	fileName = strings.ReplaceAll(fileName, ".", "")
-	fileName = strings.ReplaceAll(fileName, ",", "")
+	experiences []resumesv1alpha1.JobExperience,
+) (client.Object, error) {
+	data := map[string]any{}
 
-	// fall back to the resource name when no employer is set so experiences
-	// without an employer don't collide on ".yaml"
-	if fileName == "" {
-		fileName = parent.Name
+	for i := range experiences {
+		exp := &experiences[i]
+
+		entry, err := experienceEntry(exp)
+		if err != nil {
+			return nil, err
+		}
+
+		data[fmt.Sprintf("%s.yaml", exp.Name)] = entry
 	}
 
-	var experienceBuffer bytes.Buffer
-
-	experience := template.New("Experience")
-	experience, _ = experience.Parse(experienceTemplate)
-	if err := experience.Execute(&experienceBuffer, *parent); err != nil {
-		return nil, fmt.Errorf("unable to scaffold experience yaml for ConfigMap, %w", err)
-	}
-
-	resourceObjs := []client.Object{}
 	resourceObj := &unstructured.Unstructured{
 		Object: map[string]any{
 			"apiVersion": "v1",
@@ -71,25 +85,13 @@ func CreateConfigMapResumeExperience(
 					"app.kubernetes.io/version": resumesv1alpha1.LabelValue(collection.Spec.Web.Image.Tag),
 				},
 			},
-			"data": map[string]any{
-				// controlled by field: employer
-				// controlled by field: location
-				// controlled by field: startDate
-				// controlled by field: endDate
-				// controlled by field: position.title
-				// controlled by field: position.startDate
-				// controlled by field: position.endDate
-				// controlled by field: position.highlights
-				fmt.Sprintf("%s.yaml", fileName): experienceBuffer.String(),
-			},
+			"data": data,
 		},
 	}
 
-	resourceObj.SetNamespace(parent.Namespace)
+	resourceObj.SetNamespace(collection.Namespace)
 
-	resourceObjs = append(resourceObjs, resourceObj)
-
-	return resourceObjs, nil
+	return resourceObj, nil
 }
 
 const experienceTemplate = `
@@ -103,7 +105,7 @@ positions:
   - title: {{ .Title }}
     startDate: {{ .StartDate }}
     endDate: {{ .EndDate }}
-    highlights: 
+    highlights:
 		{{- range .Highlights }}
       - {{ . }}
 		{{- end }}

@@ -18,7 +18,6 @@ package certification
 
 import (
 	"fmt"
-	"strings"
 
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -26,21 +25,33 @@ import (
 	resumesv1alpha1 "github.com/jefedavis/resume-operator/apis/resumes/v1alpha1"
 )
 
-// CreateConfigMapResumeCert creates the resume-cert ConfigMap resource.
-func CreateConfigMapResumeCert(
-	parent *resumesv1alpha1.Certification,
-	collection *resumesv1alpha1.Profile,
-) ([]client.Object, error) {
-	resourceObjs := []client.Object{}
+// certEntry renders a single certification's YAML document for the Hugo data file.
+func certEntry(cert *resumesv1alpha1.Certification) string {
+	return `
+---
+title: ` + cert.Spec.Title + `
+issuer: ` + cert.Spec.Issuer + `
+earnedDate: ` + cert.Spec.EarnedDate + `
+alias: ` + cert.Spec.Alias + `
+validationURL: ` + cert.Spec.ValidationURL + `
+imageURL: ` + cert.Spec.ImageURL + ``
+}
 
-	// The data key is the file Hugo reads for this certification. Prefer the
-	// alias, fall back to the resource name when no alias is set (otherwise an
-	// empty alias collides on ".yaml"), and replace spaces so the key is a
-	// valid ConfigMap key.
-	fileName := strings.ReplaceAll(parent.Spec.Alias, " ", "-")
-	if fileName == "" {
-		fileName = parent.Name
+// AggregateConfigMapResumeCert builds the resume-cert ConfigMap from all
+// certifications belonging to the collection. The collection (Profile) owns the
+// ConfigMap, so there is a single stable owner instead of each certification
+// fighting over the owner reference. Each certification is keyed by its resource
+// name, which is always set and unique within the namespace.
+func AggregateConfigMapResumeCert(
+	collection *resumesv1alpha1.Profile,
+	certs []resumesv1alpha1.Certification,
+) client.Object {
+	data := map[string]any{}
+	for i := range certs {
+		cert := &certs[i]
+		data[fmt.Sprintf("%s.yaml", cert.Name)] = certEntry(cert)
 	}
+
 	resourceObj := &unstructured.Unstructured{
 		Object: map[string]any{
 			"apiVersion": "v1",
@@ -60,28 +71,11 @@ func CreateConfigMapResumeCert(
 					"app.kubernetes.io/version": resumesv1alpha1.LabelValue(collection.Spec.Web.Image.Tag),
 				},
 			},
-			"data": map[string]any{
-				// controlled by field: title
-				// controlled by field: issuer
-				// controlled by field: earnedDate
-				// controlled by field: alias
-				// controlled by field: validationURL
-				// controlled by field: imageURL
-				fmt.Sprintf("%s.yaml", fileName): `
----
-title: ` + parent.Spec.Title + `
-issuer: ` + parent.Spec.Issuer + `
-earnedDate: ` + parent.Spec.EarnedDate + `
-alias: ` + parent.Spec.Alias + `
-validationURL: ` + parent.Spec.ValidationURL + `
-imageURL: ` + parent.Spec.ImageURL + ``,
-			},
+			"data": data,
 		},
 	}
 
-	resourceObj.SetNamespace(parent.Namespace)
+	resourceObj.SetNamespace(collection.Namespace)
 
-	resourceObjs = append(resourceObjs, resourceObj)
-
-	return resourceObjs, nil
+	return resourceObj
 }

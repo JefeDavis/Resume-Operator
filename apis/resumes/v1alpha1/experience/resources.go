@@ -122,12 +122,13 @@ func GenerateForCLI(workloadFile []byte, collectionFile []byte) ([]client.Object
 // CreateFuncs is an array of functions that are called to create the child resources for the controller
 // in memory during the reconciliation loop prior to persisting the changes or updates to the Kubernetes
 // database.
+// The resume-experience ConfigMap is now aggregated and owned by the collection
+// (Profile), so individual job experiences no longer emit child resources. See
+// AggregateConfigMapResumeExperience and the Profile controller's GetResources.
 var CreateFuncs = []func(
 	*resumesv1alpha1.JobExperience,
 	*resumesv1alpha1.Profile,
-) ([]client.Object, error){
-	CreateConfigMapResumeExperience,
-}
+) ([]client.Object, error){}
 
 // InitFuncs is an array of functions that are called prior to starting the controller manager.  This is
 // necessary in instances which the controller needs to "own" objects which depend on resources to
