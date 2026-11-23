@@ -62,7 +62,7 @@ func CreateConfigMapResumeExperience(
 					"app.kubernetes.io/managed-by": "resume-operator",
 					"app.kubernetes.io/created-by": "resume-controller-manager",
 					// controlled by collection field: web.image.tag
-					"app.kubernetes.io/version": collection.Spec.Web.Image.Tag,
+					"app.kubernetes.io/version": resumesv1alpha1.LabelValue(collection.Spec.Web.Image.Tag),
 				},
 			},
 			"data": map[string]any{

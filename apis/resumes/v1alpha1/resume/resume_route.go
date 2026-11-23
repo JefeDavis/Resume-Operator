@@ -58,7 +58,7 @@ func CreateRouteResume(
 		"app.kubernetes.io/instance":   "resume-" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
 		"app.kubernetes.io/managed-by": "resume-operator",
 		"app.kubernetes.io/created-by": "resume-controller-manager",
-		"app.kubernetes.io/version":    parent.Spec.Web.Image.Tag,
+		"app.kubernetes.io/version":    resumesv1alpha1.LabelValue(parent.Spec.Web.Image.Tag),
 	}
 	for k, v := range route.Labels {
 		labels[k] = v

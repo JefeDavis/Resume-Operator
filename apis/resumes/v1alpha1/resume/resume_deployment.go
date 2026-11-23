@@ -44,7 +44,7 @@ func CreateDeploymentResume(
 					"app.kubernetes.io/managed-by": "resume-operator",
 					"app.kubernetes.io/created-by": "resume-controller-manager",
 					// controlled by field: web.image.tag
-					"app.kubernetes.io/version": parent.Spec.Web.Image.Tag,
+					"app.kubernetes.io/version": resumesv1alpha1.LabelValue(parent.Spec.Web.Image.Tag),
 				},
 			},
 			"spec": map[string]any{
@@ -70,7 +70,7 @@ func CreateDeploymentResume(
 							"app.kubernetes.io/managed-by": "resume-operator",
 							"app.kubernetes.io/created-by": "resume-controller-manager",
 							// controlled by field: web.image.tag
-							"app.kubernetes.io/version": parent.Spec.Web.Image.Tag,
+							"app.kubernetes.io/version": resumesv1alpha1.LabelValue(parent.Spec.Web.Image.Tag),
 						},
 					},
 					"spec": map[string]any{
