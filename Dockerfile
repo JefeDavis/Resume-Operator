@@ -23,7 +23,7 @@ COPY controllers/ controllers/
 COPY internal/ internal/
 
 # Build a fully static binary (CGO disabled) so it runs on scratch.
-RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -a -o manager main.go
+RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -o manager main.go
 
 # Final image: scratch. The static binary needs nothing else; CA certificates are
 # copied in as insurance for any outbound TLS (in-cluster Kubernetes API calls use
