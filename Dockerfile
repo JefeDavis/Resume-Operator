@@ -1,7 +1,9 @@
 # Build the manager binary on a Chainguard Go image.
 # The -dev variant includes a shell/apk so Docker's shell-form RUN works; switch
 # to root so the non-root default user can write to WORKDIR and the build cache.
-FROM cgr.dev/chainguard/go:latest-dev AS builder
+# Pin the builder to the native build platform and cross-compile via GOARCH so
+# multi-arch builds don't pay for QEMU emulation of the Go toolchain.
+FROM --platform=${BUILDPLATFORM} cgr.dev/chainguard/go:latest-dev AS builder
 USER root
 ARG TARGETOS
 ARG TARGETARCH
