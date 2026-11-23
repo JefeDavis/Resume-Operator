@@ -37,6 +37,12 @@ func CreateConfigMapResumeExperience(
 	fileName = strings.ReplaceAll(fileName, ".", "")
 	fileName = strings.ReplaceAll(fileName, ",", "")
 
+	// fall back to the resource name when no employer is set so experiences
+	// without an employer don't collide on ".yaml"
+	if fileName == "" {
+		fileName = parent.Name
+	}
+
 	var experienceBuffer bytes.Buffer
 
 	experience := template.New("Experience")

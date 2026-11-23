@@ -18,6 +18,7 @@ package certification
 
 import (
 	"fmt"
+	"strings"
 
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -31,6 +32,15 @@ func CreateConfigMapResumeCert(
 	collection *resumesv1alpha1.Profile,
 ) ([]client.Object, error) {
 	resourceObjs := []client.Object{}
+
+	// The data key is the file Hugo reads for this certification. Prefer the
+	// alias, fall back to the resource name when no alias is set (otherwise an
+	// empty alias collides on ".yaml"), and replace spaces so the key is a
+	// valid ConfigMap key.
+	fileName := strings.ReplaceAll(parent.Spec.Alias, " ", "-")
+	if fileName == "" {
+		fileName = parent.Name
+	}
 	resourceObj := &unstructured.Unstructured{
 		Object: map[string]any{
 			"apiVersion": "v1",
@@ -57,7 +67,7 @@ func CreateConfigMapResumeCert(
 				// controlled by field: alias
 				// controlled by field: validationURL
 				// controlled by field: imageURL
-				fmt.Sprintf("%s.yaml", parent.Spec.Alias): `
+				fmt.Sprintf("%s.yaml", fileName): `
 ---
 title: ` + parent.Spec.Title + `
 issuer: ` + parent.Spec.Issuer + `
