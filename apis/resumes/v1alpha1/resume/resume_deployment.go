@@ -107,6 +107,12 @@ func CreateDeploymentResume(
 										"subPath":   "config.toml",
 										"name":      "config",
 									},
+									// writable scratch so Hugo's cache (HUGO_CACHEDIR=/tmp)
+									// works under a read-only root filesystem.
+									map[string]any{
+										"mountPath": "/tmp",
+										"name":      "tmp",
+									},
 								},
 							},
 						},
@@ -134,6 +140,10 @@ func CreateDeploymentResume(
 								"configMap": map[string]any{
 									"name": "resume-config",
 								},
+							},
+							map[string]any{
+								"name":     "tmp",
+								"emptyDir": map[string]any{},
 							},
 						},
 					},

@@ -108,6 +108,20 @@ func CreateDeploymentPdfConverter(
 										"type": "RuntimeDefault",
 									},
 								},
+								// writable scratch so the converter's temp PDFs and
+								// headless Chrome work under a read-only root filesystem.
+								"volumeMounts": []any{
+									map[string]any{
+										"mountPath": "/tmp",
+										"name":      "tmp",
+									},
+								},
+							},
+						},
+						"volumes": []any{
+							map[string]any{
+								"name":     "tmp",
+								"emptyDir": map[string]any{},
 							},
 						},
 					},
