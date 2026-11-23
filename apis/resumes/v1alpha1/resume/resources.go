@@ -49,7 +49,7 @@ spec:
   web:
     image:
       tag: "latest"
-      registry: "ghcr.io/"
+      registry: "ghcr.io"
       name: "jefedavis/resume"
       pullPolicy: "IfNotPresent"
   baseURL: "example.com"
@@ -57,7 +57,7 @@ spec:
   pageCount: "1"
   pdf:
     image:
-      registry: "ghcr.io/"
+      registry: "ghcr.io"
       name: "jefedavis/resume-pdf-converter"
       tag: "latest"
       pullPolicy: "IfNotPresent"

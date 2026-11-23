@@ -88,8 +88,8 @@ spec:
                         description: '(Default: "IfNotPresent")'
                         type: string
                       registry:
-                        default: ghcr.io/
-                        description: '(Default: "ghcr.io/")'
+                        default: ghcr.io
+                        description: '(Default: "ghcr.io")'
                         type: string
                       tag:
                         default: latest
@@ -677,8 +677,8 @@ spec:
                         description: '(Default: "IfNotPresent")'
                         type: string
                       registry:
-                        default: ghcr.io/
-                        description: '(Default: "ghcr.io/")'
+                        default: ghcr.io
+                        description: '(Default: "ghcr.io")'
                         type: string
                       tag:
                         default: latest

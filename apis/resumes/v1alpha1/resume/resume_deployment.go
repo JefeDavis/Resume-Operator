@@ -80,7 +80,7 @@ func CreateDeploymentResume(
 								// controlled by field: web.image.registry
 								// controlled by field: web.image.name
 								// controlled by field: web.image.tag
-								"image": "" + parent.Spec.Web.Image.Registry + "" + parent.Spec.Web.Image.Name + ":" + parent.Spec.Web.Image.Tag + "",
+								"image": imageRef(parent.Spec.Web.Image.Registry, parent.Spec.Web.Image.Name, parent.Spec.Web.Image.Tag),
 								// controlled by field: web.image.pullPolicy
 								"imagePullPolicy": parent.Spec.Web.Image.PullPolicy,
 								"args": []any{

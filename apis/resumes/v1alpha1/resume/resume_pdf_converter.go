@@ -79,7 +79,7 @@ func CreateDeploymentPdfConverter(
 								// controlled by field: pdf.image.registry
 								// controlled by field: pdf.image.name
 								// controlled by field: pdf.image.tag
-								"image": "" + parent.Spec.Pdf.Image.Registry + "" + parent.Spec.Pdf.Image.Name + ":" + parent.Spec.Pdf.Image.Tag + "",
+								"image": imageRef(parent.Spec.Pdf.Image.Registry, parent.Spec.Pdf.Image.Name, parent.Spec.Pdf.Image.Tag),
 								"env": []any{
 									map[string]any{
 										"name":  "TARGET_URL",
