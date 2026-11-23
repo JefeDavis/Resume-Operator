@@ -38,7 +38,7 @@ func CreateIngressResume(
 	// Default ingress class; overridable through spec.ingress.className.
 	className := "nginx"
 
-	labels := map[string]interface{}{
+	labels := map[string]any{
 		"app.kubernetes.io/name":      "hugo",
 		"app.kubernetes.io/component": "webfront",
 		"app.kubernetes.io/part-of":   "resume",
@@ -53,7 +53,7 @@ func CreateIngressResume(
 
 	// Annotations are entirely user supplied (e.g. cert-manager issuer, TLS
 	// settings); nothing is hardcoded.
-	annotations := map[string]interface{}{}
+	annotations := map[string]any{}
 
 	if ingress := parent.Spec.Ingress; ingress != nil {
 		if ingress.ClassName != "" {
@@ -70,50 +70,50 @@ func CreateIngressResume(
 	}
 
 	resourceObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "networking.k8s.io/v1",
 			"kind":       "Ingress",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":        "resume",
 				"labels":      labels,
 				"annotations": annotations,
 			},
-			"spec": map[string]interface{}{
+			"spec": map[string]any{
 				"ingressClassName": className,
-				"tls": []interface{}{
-					map[string]interface{}{
-						"hosts": []interface{}{
+				"tls": []any{
+					map[string]any{
+						"hosts": []any{
 							// controlled by field: baseURL
 							parent.Spec.BaseURL,
 						},
 						"secretName": "resume-tls",
 					},
 				},
-				"rules": []interface{}{
-					map[string]interface{}{
+				"rules": []any{
+					map[string]any{
 						// controlled by field: baseURL
 						"host": parent.Spec.BaseURL,
-						"http": map[string]interface{}{
-							"paths": []interface{}{
-								map[string]interface{}{
+						"http": map[string]any{
+							"paths": []any{
+								map[string]any{
 									"pathType": "Prefix",
 									"path":     "/",
-									"backend": map[string]interface{}{
-										"service": map[string]interface{}{
+									"backend": map[string]any{
+										"service": map[string]any{
 											"name": "resume-svc",
-											"port": map[string]interface{}{
+											"port": map[string]any{
 												"number": 8080,
 											},
 										},
 									},
 								},
-								map[string]interface{}{
+								map[string]any{
 									"pathType": "Prefix",
 									"path":     "/convert",
-									"backend": map[string]interface{}{
-										"service": map[string]interface{}{
+									"backend": map[string]any{
+										"service": map[string]any{
 											"name": "pdf-converter-svc",
-											"port": map[string]interface{}{
+											"port": map[string]any{
 												"number": 3000,
 											},
 										},

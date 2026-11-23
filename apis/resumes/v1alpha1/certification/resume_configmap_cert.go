@@ -32,12 +32,12 @@ func CreateConfigMapResumeCert(
 ) ([]client.Object, error) {
 	resourceObjs := []client.Object{}
 	resourceObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "v1",
 			"kind":       "ConfigMap",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "resume-cert",
-				"labels": map[string]interface{}{
+				"labels": map[string]any{
 					"app.kubernetes.io/name":      "hugo",
 					"app.kubernetes.io/component": "data",
 					"app.kubernetes.io/part-of":   "resume",
@@ -50,7 +50,7 @@ func CreateConfigMapResumeCert(
 					"app.kubernetes.io/version": collection.Spec.Web.Image.Tag,
 				},
 			},
-			"data": map[string]interface{}{
+			"data": map[string]any{
 				// controlled by field: title
 				// controlled by field: issuer
 				// controlled by field: earnedDate

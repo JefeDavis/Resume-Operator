@@ -29,12 +29,12 @@ func CreateDeploymentResume(
 ) ([]client.Object, error) {
 	resourceObjs := []client.Object{}
 	resourceObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "apps/v1",
 			"kind":       "Deployment",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "resume",
-				"labels": map[string]interface{}{
+				"labels": map[string]any{
 					"app.kubernetes.io/name":      "hugo",
 					"app.kubernetes.io/component": "webfront",
 					"app.kubernetes.io/part-of":   "resume",
@@ -47,9 +47,9 @@ func CreateDeploymentResume(
 					"app.kubernetes.io/version": parent.Spec.Web.Image.Tag,
 				},
 			},
-			"spec": map[string]interface{}{
-				"selector": map[string]interface{}{
-					"matchLabels": map[string]interface{}{
+			"spec": map[string]any{
+				"selector": map[string]any{
+					"matchLabels": map[string]any{
 						"app.kubernetes.io/name":      "hugo",
 						"app.kubernetes.io/component": "webfront",
 						"app.kubernetes.io/part-of":   "resume",
@@ -58,9 +58,9 @@ func CreateDeploymentResume(
 						"app.kubernetes.io/instance": "resume-" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
 					},
 				},
-				"template": map[string]interface{}{
-					"metadata": map[string]interface{}{
-						"labels": map[string]interface{}{
+				"template": map[string]any{
+					"metadata": map[string]any{
+						"labels": map[string]any{
 							"app.kubernetes.io/name":      "hugo",
 							"app.kubernetes.io/component": "webfront",
 							"app.kubernetes.io/part-of":   "resume",
@@ -73,9 +73,9 @@ func CreateDeploymentResume(
 							"app.kubernetes.io/version": parent.Spec.Web.Image.Tag,
 						},
 					},
-					"spec": map[string]interface{}{
-						"containers": []interface{}{
-							map[string]interface{}{
+					"spec": map[string]any{
+						"containers": []any{
+							map[string]any{
 								"name": "resume",
 								// controlled by field: web.image.registry
 								// controlled by field: web.image.name
@@ -83,26 +83,26 @@ func CreateDeploymentResume(
 								"image": "" + parent.Spec.Web.Image.Registry + "" + parent.Spec.Web.Image.Name + ":" + parent.Spec.Web.Image.Tag + "",
 								// controlled by field: web.image.pullPolicy
 								"imagePullPolicy": parent.Spec.Web.Image.PullPolicy,
-								"args": []interface{}{
+								"args": []any{
 									"server",
 									// controlled by field: baseURL
 									"--baseURL=https://" + parent.Spec.BaseURL,
 									"--appendPort=false",
 								},
-								"volumeMounts": []interface{}{
-									map[string]interface{}{
+								"volumeMounts": []any{
+									map[string]any{
 										"mountPath": "/site/data",
 										"name":      "profile-mount",
 									},
-									map[string]interface{}{
+									map[string]any{
 										"mountPath": "/site/data/experience/",
 										"name":      "experience-mount",
 									},
-									map[string]interface{}{
+									map[string]any{
 										"mountPath": "/site/data/certs",
 										"name":      "certs-mount",
 									},
-									map[string]interface{}{
+									map[string]any{
 										"mountPath": "/site/config.toml",
 										"subPath":   "config.toml",
 										"name":      "config",
@@ -110,28 +110,28 @@ func CreateDeploymentResume(
 								},
 							},
 						},
-						"volumes": []interface{}{
-							map[string]interface{}{
+						"volumes": []any{
+							map[string]any{
 								"name": "profile-mount",
-								"configMap": map[string]interface{}{
+								"configMap": map[string]any{
 									"name": "resume-profile",
 								},
 							},
-							map[string]interface{}{
+							map[string]any{
 								"name": "experience-mount",
-								"configMap": map[string]interface{}{
+								"configMap": map[string]any{
 									"name": "resume-experience",
 								},
 							},
-							map[string]interface{}{
+							map[string]any{
 								"name": "certs-mount",
-								"configMap": map[string]interface{}{
+								"configMap": map[string]any{
 									"name": "resume-cert",
 								},
 							},
-							map[string]interface{}{
+							map[string]any{
 								"name": "config",
-								"configMap": map[string]interface{}{
+								"configMap": map[string]any{
 									"name": "resume-config",
 								},
 							},

@@ -29,12 +29,12 @@ func CreateServiceResumeSvc(
 ) ([]client.Object, error) {
 	resourceObjs := []client.Object{}
 	resourceObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "v1",
 			"kind":       "Service",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "resume-svc",
-				"labels": map[string]interface{}{
+				"labels": map[string]any{
 					"app.kubernetes.io/name":      "hugo",
 					"app.kubernetes.io/component": "webfront",
 					"app.kubernetes.io/part-of":   "resume",
@@ -47,16 +47,16 @@ func CreateServiceResumeSvc(
 					"app.kubernetes.io/version": parent.Spec.Web.Image.Tag,
 				},
 			},
-			"spec": map[string]interface{}{
-				"selector": map[string]interface{}{
+			"spec": map[string]any{
+				"selector": map[string]any{
 					"app.kubernetes.io/name":      "hugo",
 					"app.kubernetes.io/component": "webfront",
 					// controlled by field: profile.firstName
 					// controlled by field: profile.lastName
 					"app.kubernetes.io/instance": "resume-" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
 				},
-				"ports": []interface{}{
-					map[string]interface{}{
+				"ports": []any{
+					map[string]any{
 						"port":       8080,
 						"targetPort": 1313,
 					},

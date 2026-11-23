@@ -39,31 +39,31 @@ func applyPodCustomizations(
 	containerName string,
 	containerSecurityContext *corev1.SecurityContext,
 ) error {
-	spec, ok := deployment.Object["spec"].(map[string]interface{})
+	spec, ok := deployment.Object["spec"].(map[string]any)
 	if !ok {
 		return fmt.Errorf("deployment %q missing spec", containerName)
 	}
 
-	template, ok := spec["template"].(map[string]interface{})
+	template, ok := spec["template"].(map[string]any)
 	if !ok {
 		return fmt.Errorf("deployment %q missing spec.template", containerName)
 	}
 
-	metadata, ok := template["metadata"].(map[string]interface{})
+	metadata, ok := template["metadata"].(map[string]any)
 	if !ok {
 		return fmt.Errorf("deployment %q missing spec.template.metadata", containerName)
 	}
 
-	podSpec, ok := template["spec"].(map[string]interface{})
+	podSpec, ok := template["spec"].(map[string]any)
 	if !ok {
 		return fmt.Errorf("deployment %q missing spec.template.spec", containerName)
 	}
 
 	// merge additional pod labels into the existing pod template labels
 	if len(parent.Spec.PodLabels) > 0 {
-		labels, ok := metadata["labels"].(map[string]interface{})
+		labels, ok := metadata["labels"].(map[string]any)
 		if !ok {
-			labels = map[string]interface{}{}
+			labels = map[string]any{}
 			metadata["labels"] = labels
 		}
 
@@ -74,9 +74,9 @@ func applyPodCustomizations(
 
 	// set pod annotations
 	if len(parent.Spec.PodAnnotations) > 0 {
-		annotations, ok := metadata["annotations"].(map[string]interface{})
+		annotations, ok := metadata["annotations"].(map[string]any)
 		if !ok {
-			annotations = map[string]interface{}{}
+			annotations = map[string]any{}
 			metadata["annotations"] = annotations
 		}
 
@@ -102,13 +102,13 @@ func applyPodCustomizations(
 			return fmt.Errorf("unable to convert securityContext, %w", err)
 		}
 
-		containers, ok := podSpec["containers"].([]interface{})
+		containers, ok := podSpec["containers"].([]any)
 		if !ok {
 			return fmt.Errorf("deployment %q missing spec.template.spec.containers", containerName)
 		}
 
 		for _, c := range containers {
-			container, ok := c.(map[string]interface{})
+			container, ok := c.(map[string]any)
 			if !ok {
 				continue
 			}

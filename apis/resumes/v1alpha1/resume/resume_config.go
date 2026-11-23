@@ -29,12 +29,12 @@ func CreateConfigMapResumeConfig(
 ) ([]client.Object, error) {
 	resourceObjs := []client.Object{}
 	resourceObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "v1",
 			"kind":       "ConfigMap",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "resume-config",
-				"labels": map[string]interface{}{
+				"labels": map[string]any{
 					"app.kubernetes.io/name":      "hugo",
 					"app.kubernetes.io/component": "config",
 					"app.kubernetes.io/part-of":   "resume",
@@ -47,7 +47,7 @@ func CreateConfigMapResumeConfig(
 					"app.kubernetes.io/version": parent.Spec.Web.Image.Tag,
 				},
 			},
-			"data": map[string]interface{}{
+			"data": map[string]any{
 				// controlled by field: baseURL
 				// controlled by field: pageTitle
 				// controlled by field: pageCount

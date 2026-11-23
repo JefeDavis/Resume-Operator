@@ -29,12 +29,12 @@ func CreateDeploymentPdfConverter(
 ) ([]client.Object, error) {
 	resourceObjs := []client.Object{}
 	resourceObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "apps/v1",
 			"kind":       "Deployment",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "pdf-converter",
-				"labels": map[string]interface{}{
+				"labels": map[string]any{
 					"app.kubernetes.io/name":      "pdf",
 					"app.kubernetes.io/component": "converter",
 					// controlled by field: profile.firstName
@@ -47,9 +47,9 @@ func CreateDeploymentPdfConverter(
 					"app.kubernetes.io/version": parent.Spec.Web.Image.Tag,
 				},
 			},
-			"spec": map[string]interface{}{
-				"selector": map[string]interface{}{
-					"matchLabels": map[string]interface{}{
+			"spec": map[string]any{
+				"selector": map[string]any{
+					"matchLabels": map[string]any{
 						"app.kubernetes.io/name":      "pdf",
 						"app.kubernetes.io/component": "converter",
 						// controlled by field: profile.firstName
@@ -57,9 +57,9 @@ func CreateDeploymentPdfConverter(
 						"app.kubernetes.io/instance": "resume-" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
 					},
 				},
-				"template": map[string]interface{}{
-					"metadata": map[string]interface{}{
-						"labels": map[string]interface{}{
+				"template": map[string]any{
+					"metadata": map[string]any{
+						"labels": map[string]any{
 							"app.kubernetes.io/name":      "pdf",
 							"app.kubernetes.io/component": "converter",
 							// controlled by field: profile.firstName
@@ -72,22 +72,22 @@ func CreateDeploymentPdfConverter(
 							"app.kubernetes.io/version": parent.Spec.Web.Image.Tag,
 						},
 					},
-					"spec": map[string]interface{}{
-						"containers": []interface{}{
-							map[string]interface{}{
+					"spec": map[string]any{
+						"containers": []any{
+							map[string]any{
 								"name": "pdf-converter",
 								// controlled by field: pdf.image.registry
 								// controlled by field: pdf.image.name
 								// controlled by field: pdf.image.tag
 								"image": "" + parent.Spec.Pdf.Image.Registry + "" + parent.Spec.Pdf.Image.Name + ":" + parent.Spec.Pdf.Image.Tag + "",
-								"env": []interface{}{
-									map[string]interface{}{
+								"env": []any{
+									map[string]any{
 										"name":  "TARGET_URL",
 										"value": "http://resume-svc:8080",
 									},
 								},
-								"ports": []interface{}{
-									map[string]interface{}{
+								"ports": []any{
+									map[string]any{
 										"containerPort": 3000,
 									},
 								},
@@ -96,15 +96,15 @@ func CreateDeploymentPdfConverter(
 								// The converter drives headless Chrome with --no-sandbox
 								// (see the resume-pdf-converter image), so it no longer needs
 								// the SYS_ADMIN capability. Harden the container instead.
-								"securityContext": map[string]interface{}{
+								"securityContext": map[string]any{
 									"runAsNonRoot":             true,
 									"allowPrivilegeEscalation": false,
-									"capabilities": map[string]interface{}{
-										"drop": []interface{}{
+									"capabilities": map[string]any{
+										"drop": []any{
 											"ALL",
 										},
 									},
-									"seccompProfile": map[string]interface{}{
+									"seccompProfile": map[string]any{
 										"type": "RuntimeDefault",
 									},
 								},
@@ -135,12 +135,12 @@ func CreateServicePdfConverterSvc(
 ) ([]client.Object, error) {
 	resourceObjs := []client.Object{}
 	resourceObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "v1",
 			"kind":       "Service",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "pdf-converter-svc",
-				"labels": map[string]interface{}{
+				"labels": map[string]any{
 					"app.kubernetes.io/name":      "pdf",
 					"app.kubernetes.io/component": "converter",
 					// controlled by field: profile.firstName
@@ -153,16 +153,16 @@ func CreateServicePdfConverterSvc(
 					"app.kubernetes.io/version": parent.Spec.Web.Image.Tag,
 				},
 			},
-			"spec": map[string]interface{}{
-				"selector": map[string]interface{}{
+			"spec": map[string]any{
+				"selector": map[string]any{
 					"app.kubernetes.io/name":      "pdf",
 					"app.kubernetes.io/component": "converter",
 					// controlled by field: profile.firstName
 					// controlled by field: profile.lastName
 					"app.kubernetes.io/instance": "resume-" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
 				},
-				"ports": []interface{}{
-					map[string]interface{}{
+				"ports": []any{
+					map[string]any{
 						"port":       3000,
 						"targetPort": 3000,
 					},

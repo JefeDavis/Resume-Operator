@@ -47,12 +47,12 @@ func CreateConfigMapResumeExperience(
 
 	resourceObjs := []client.Object{}
 	resourceObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "v1",
 			"kind":       "ConfigMap",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "resume-experience",
-				"labels": map[string]interface{}{
+				"labels": map[string]any{
 					"app.kubernetes.io/name":      "hugo",
 					"app.kubernetes.io/component": "data",
 					"app.kubernetes.io/part-of":   "resume",
@@ -65,7 +65,7 @@ func CreateConfigMapResumeExperience(
 					"app.kubernetes.io/version": collection.Spec.Web.Image.Tag,
 				},
 			},
-			"data": map[string]interface{}{
+			"data": map[string]any{
 				// controlled by field: employer
 				// controlled by field: location
 				// controlled by field: startDate

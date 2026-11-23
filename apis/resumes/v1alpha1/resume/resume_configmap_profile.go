@@ -41,12 +41,12 @@ func CreateConfigMapResumeProfile(
 
 	resourceObjs := []client.Object{}
 	resourceObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "v1",
 			"kind":       "ConfigMap",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "resume-profile",
-				"labels": map[string]interface{}{
+				"labels": map[string]any{
 					"app.kubernetes.io/name":      "hugo",
 					"app.kubernetes.io/component": "data",
 					"app.kubernetes.io/part-of":   "resume",
@@ -59,7 +59,7 @@ func CreateConfigMapResumeProfile(
 					"app.kubernetes.io/version": parent.Spec.Web.Image.Tag,
 				},
 			},
-			"data": map[string]interface{}{
+			"data": map[string]any{
 				// controlled by field: profile.firstName
 				// controlled by field: profile.lastName
 				// controlled by field: profile.phoneNumber

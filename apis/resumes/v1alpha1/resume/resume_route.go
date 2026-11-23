@@ -51,7 +51,7 @@ func CreateRouteResume(
 		hostname = parent.Spec.BaseURL
 	}
 
-	labels := map[string]interface{}{
+	labels := map[string]any{
 		"app.kubernetes.io/name":       "hugo",
 		"app.kubernetes.io/component":  "webfront",
 		"app.kubernetes.io/part-of":    "resume",
@@ -64,14 +64,14 @@ func CreateRouteResume(
 		labels[k] = v
 	}
 
-	annotations := map[string]interface{}{}
+	annotations := map[string]any{}
 	for k, v := range route.Annotations {
 		annotations[k] = v
 	}
 
-	parentRefs := make([]interface{}, 0, len(route.ParentRefs))
+	parentRefs := make([]any, 0, len(route.ParentRefs))
 	for _, ref := range route.ParentRefs {
-		parentRef := map[string]interface{}{
+		parentRef := map[string]any{
 			"name": ref.Name,
 		}
 
@@ -99,50 +99,50 @@ func CreateRouteResume(
 	}
 
 	resourceObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": apiVersion,
 			"kind":       kind,
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name":        "resume",
 				"labels":      labels,
 				"annotations": annotations,
 			},
-			"spec": map[string]interface{}{
+			"spec": map[string]any{
 				"parentRefs": parentRefs,
-				"hostnames": []interface{}{
+				"hostnames": []any{
 					hostname,
 				},
-				"rules": []interface{}{
+				"rules": []any{
 					// /convert routes to the pdf-converter; declared first so the
 					// more specific prefix is evaluated ahead of the catch-all.
-					map[string]interface{}{
-						"matches": []interface{}{
-							map[string]interface{}{
-								"path": map[string]interface{}{
+					map[string]any{
+						"matches": []any{
+							map[string]any{
+								"path": map[string]any{
 									"type":  "PathPrefix",
 									"value": "/convert",
 								},
 							},
 						},
-						"backendRefs": []interface{}{
-							map[string]interface{}{
+						"backendRefs": []any{
+							map[string]any{
 								"name": "pdf-converter-svc",
 								"port": int64(3000),
 							},
 						},
 					},
 					// / routes to the resume site.
-					map[string]interface{}{
-						"matches": []interface{}{
-							map[string]interface{}{
-								"path": map[string]interface{}{
+					map[string]any{
+						"matches": []any{
+							map[string]any{
+								"path": map[string]any{
 									"type":  "PathPrefix",
 									"value": "/",
 								},
 							},
 						},
-						"backendRefs": []interface{}{
-							map[string]interface{}{
+						"backendRefs": []any{
+							map[string]any{
 								"name": "resume-svc",
 								"port": int64(8080),
 							},
