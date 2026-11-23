@@ -62,6 +62,20 @@ baseURL = "https://` + parent.Spec.BaseURL + `/"
 title = "` + parent.Spec.PageTitle + `"
 #googleAnalytics = ""
 
+# Data arrives via ConfigMap volume mounts, which kubelet exposes as symlinks.
+# Hugo does not follow symlinked files, so mount the kubelet-maintained "..data"
+# dir (the real file set) as a module mount for each data component.
+[module]
+  [[module.mounts]]
+    source = "data/..data"
+    target = "data"
+  [[module.mounts]]
+    source = "data/experience/..data"
+    target = "data/experience"
+  [[module.mounts]]
+    source = "data/certs/..data"
+    target = "data/certs"
+
 [params]
 enableMetaTags = true
 colorLight = "#fff"
@@ -78,22 +92,7 @@ colorRightColumnHeadingText = "#4C7535"
 colorRightColumnBodyText = "#666"
 colorRightColumnIconPrimary = "#fff"
 colorRightColumnIconBackground = "#96B986"
-pages = ` + parent.Spec.PageCount + `
-
-# Data arrives via ConfigMap volume mounts, which kubelet exposes as symlinks.
-# Hugo does not follow symlinked files, so mount the kubelet-maintained "..data"
-# dir (the real file set) as a module mount for each data component.
-[module]
-  [[module.mounts]]
-    source = "data/..data"
-    target = "data"
-  [[module.mounts]]
-    source = "data/experience/..data"
-    target = "data/experience"
-  [[module.mounts]]
-    source = "data/certs/..data"
-    target = "data/certs"
-`,
+pages = ` + parent.Spec.PageCount + ``,
 			},
 		},
 	}
