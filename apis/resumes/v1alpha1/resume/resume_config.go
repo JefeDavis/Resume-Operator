@@ -51,7 +51,7 @@ func CreateConfigMapResumeConfig(
 				// controlled by field: baseURL
 				// controlled by field: pageTitle
 				// controlled by field: pageCount
-				"config.toml": `languageCode = "en-us"
+				"config.toml": `locale = "en-us"
 defaultContentLanguage = "en"
 enableRobotsTXT = true
 enableEmoji = true
