@@ -1,5 +1,8 @@
-# Build the manager binary
-FROM golang:1.26 AS builder
+# Build the manager binary on a Chainguard Go image.
+# The -dev variant includes a shell/apk so Docker's shell-form RUN works; switch
+# to root so the non-root default user can write to WORKDIR and the build cache.
+FROM cgr.dev/chainguard/go:latest-dev AS builder
+USER root
 ARG TARGETOS
 ARG TARGETARCH
 
@@ -17,14 +20,16 @@ COPY apis/ apis/
 COPY controllers/ controllers/
 COPY internal/ internal/
 
-# Build
+# Build a fully static binary (CGO disabled) so it runs on scratch.
 RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -a -o manager main.go
 
-# Use distroless as minimal base image to package the manager binary
-# Refer to https://github.com/GoogleContainerTools/distroless for more details
-FROM gcr.io/distroless/static:nonroot
+# Final image: scratch. The static binary needs nothing else; CA certificates are
+# copied in as insurance for any outbound TLS (in-cluster Kubernetes API calls use
+# the mounted cluster CA and do not require these).
+FROM scratch
 WORKDIR /
-COPY --from=builder /workspace/manager .
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+COPY --from=builder /workspace/manager /manager
 USER 65532:65532
 
 ENTRYPOINT ["/manager"]
