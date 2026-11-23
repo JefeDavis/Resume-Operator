@@ -17,6 +17,10 @@ limitations under the License.
 package resume
 
 import (
+	"crypto/sha256"
+	"encoding/json"
+	"fmt"
+
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -28,6 +32,15 @@ func CreateDeploymentResume(
 	parent *resumesv1alpha1.Profile,
 ) ([]client.Object, error) {
 	resourceObjs := []client.Object{}
+
+	// Hugo resolves the ConfigMap data at startup, so content changes must roll
+	// the pod. Hash the Profile spec (which drives profile.yaml and config.toml)
+	// into a pod-template annotation so an update triggers a new rollout.
+	specJSON, err := json.Marshal(parent.Spec)
+	if err != nil {
+		return nil, fmt.Errorf("unable to marshal Profile spec for config checksum, %w", err)
+	}
+	configChecksum := fmt.Sprintf("%x", sha256.Sum256(specJSON))
 	resourceObj := &unstructured.Unstructured{
 		Object: map[string]any{
 			"apiVersion": "apps/v1",
@@ -60,6 +73,10 @@ func CreateDeploymentResume(
 				},
 				"template": map[string]any{
 					"metadata": map[string]any{
+						// roll the pod when the Profile-driven config/data changes
+						"annotations": map[string]any{
+							"resume.jefedavis.dev/config-checksum": configChecksum,
+						},
 						"labels": map[string]any{
 							"app.kubernetes.io/name":      "hugo",
 							"app.kubernetes.io/component": "webfront",
@@ -95,7 +112,6 @@ func CreateDeploymentResume(
 									"--source=/site",
 									"--bind=0.0.0.0",
 									"--disableFastRender",
-									"--poll=2s",
 									"--noBuildLock",
 									"--renderToMemory",
 								},
