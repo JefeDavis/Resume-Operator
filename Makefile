@@ -66,13 +66,21 @@ run: manifests generate fmt vet ## Run a controller from your host.
 build-cli: ## Build the companion CLI.
 	go build -o bin/resumectl cmd/resumectl/main.go
 
+# Platforms for multi-arch image builds.
+PLATFORMS ?= linux/amd64,linux/arm64
+
 .PHONY: docker-build
-docker-build: ## Build docker image with the manager.
-	docker build -t ${IMG} .
+docker-build: ## Build the manager image for the local platform (loads into the docker store).
+	docker buildx build --load -t ${IMG} .
+
+.PHONY: docker-buildx
+docker-buildx: ## Build and push a multi-arch manager image via buildx.
+	- docker buildx create --name resume-builder --driver docker-container
+	docker buildx build --builder resume-builder --push --platform=$(PLATFORMS) -t ${IMG} .
+	- docker buildx rm resume-builder
 
 .PHONY: docker-push
-docker-push: ## Push docker image with the manager.
-	docker push ${IMG}
+docker-push: docker-buildx ## Build and push a multi-arch manager image (alias for docker-buildx).
 
 ##@ Deployment
 
