@@ -17,6 +17,10 @@ limitations under the License.
 package resume
 
 import (
+	"crypto/sha256"
+	"encoding/json"
+	"fmt"
+
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -28,13 +32,22 @@ func CreateDeploymentResume(
 	parent *resumesv1alpha1.Profile,
 ) ([]client.Object, error) {
 	resourceObjs := []client.Object{}
+
+	// Hugo resolves the ConfigMap data at startup, so content changes must roll
+	// the pod. Hash the Profile spec (which drives profile.yaml and config.toml)
+	// into a pod-template annotation so an update triggers a new rollout.
+	specJSON, err := json.Marshal(parent.Spec)
+	if err != nil {
+		return nil, fmt.Errorf("unable to marshal Profile spec for config checksum, %w", err)
+	}
+	configChecksum := fmt.Sprintf("%x", sha256.Sum256(specJSON))
 	resourceObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "apps/v1",
 			"kind":       "Deployment",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "resume",
-				"labels": map[string]interface{}{
+				"labels": map[string]any{
 					"app.kubernetes.io/name":      "hugo",
 					"app.kubernetes.io/component": "webfront",
 					"app.kubernetes.io/part-of":   "resume",
@@ -44,12 +57,12 @@ func CreateDeploymentResume(
 					"app.kubernetes.io/managed-by": "resume-operator",
 					"app.kubernetes.io/created-by": "resume-controller-manager",
 					// controlled by field: web.image.tag
-					"app.kubernetes.io/version": parent.Spec.Web.Image.Tag,
+					"app.kubernetes.io/version": resumesv1alpha1.LabelValue(parent.Spec.Web.Image.Tag),
 				},
 			},
-			"spec": map[string]interface{}{
-				"selector": map[string]interface{}{
-					"matchLabels": map[string]interface{}{
+			"spec": map[string]any{
+				"selector": map[string]any{
+					"matchLabels": map[string]any{
 						"app.kubernetes.io/name":      "hugo",
 						"app.kubernetes.io/component": "webfront",
 						"app.kubernetes.io/part-of":   "resume",
@@ -58,9 +71,13 @@ func CreateDeploymentResume(
 						"app.kubernetes.io/instance": "resume-" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
 					},
 				},
-				"template": map[string]interface{}{
-					"metadata": map[string]interface{}{
-						"labels": map[string]interface{}{
+				"template": map[string]any{
+					"metadata": map[string]any{
+						// roll the pod when the Profile-driven config/data changes
+						"annotations": map[string]any{
+							"resume.jefedavis.dev/config-checksum": configChecksum,
+						},
+						"labels": map[string]any{
 							"app.kubernetes.io/name":      "hugo",
 							"app.kubernetes.io/component": "webfront",
 							"app.kubernetes.io/part-of":   "resume",
@@ -70,70 +87,89 @@ func CreateDeploymentResume(
 							"app.kubernetes.io/managed-by": "resume-operator",
 							"app.kubernetes.io/created-by": "resume-controller-manager",
 							// controlled by field: web.image.tag
-							"app.kubernetes.io/version": parent.Spec.Web.Image.Tag,
+							"app.kubernetes.io/version": resumesv1alpha1.LabelValue(parent.Spec.Web.Image.Tag),
 						},
 					},
-					"spec": map[string]interface{}{
-						"containers": []interface{}{
-							map[string]interface{}{
+					"spec": map[string]any{
+						"containers": []any{
+							map[string]any{
 								"name": "resume",
 								// controlled by field: web.image.registry
 								// controlled by field: web.image.name
 								// controlled by field: web.image.tag
-								"image": "" + parent.Spec.Web.Image.Registry + "" + parent.Spec.Web.Image.Name + ":" + parent.Spec.Web.Image.Tag + "",
+								"image": imageRef(parent.Spec.Web.Image.Registry, parent.Spec.Web.Image.Name, parent.Spec.Web.Image.Tag),
 								// controlled by field: web.image.pullPolicy
 								"imagePullPolicy": parent.Spec.Web.Image.PullPolicy,
-								"args": []interface{}{
+								// The operator owns the full Hugo server command.
+								// --noBuildLock/--renderToMemory (with HUGO_CACHEDIR and
+								// HUGO_RESOURCEDIR pointed under /tmp in the image) let Hugo
+								// run under a read-only root filesystem.
+								"args": []any{
 									"server",
 									// controlled by field: baseURL
 									"--baseURL=https://" + parent.Spec.BaseURL,
 									"--appendPort=false",
+									"--source=/site",
+									"--bind=0.0.0.0",
+									"--disableFastRender",
+									"--noBuildLock",
+									"--renderToMemory",
 								},
-								"volumeMounts": []interface{}{
-									map[string]interface{}{
+								"volumeMounts": []any{
+									map[string]any{
 										"mountPath": "/site/data",
 										"name":      "profile-mount",
 									},
-									map[string]interface{}{
+									map[string]any{
 										"mountPath": "/site/data/experience/",
 										"name":      "experience-mount",
 									},
-									map[string]interface{}{
+									map[string]any{
 										"mountPath": "/site/data/certs",
 										"name":      "certs-mount",
 									},
-									map[string]interface{}{
+									map[string]any{
 										"mountPath": "/site/config.toml",
 										"subPath":   "config.toml",
 										"name":      "config",
 									},
+									// writable scratch so Hugo's cache (HUGO_CACHEDIR=/tmp)
+									// works under a read-only root filesystem.
+									map[string]any{
+										"mountPath": "/tmp",
+										"name":      "tmp",
+									},
 								},
 							},
 						},
-						"volumes": []interface{}{
-							map[string]interface{}{
+						"volumes": []any{
+							map[string]any{
 								"name": "profile-mount",
-								"configMap": map[string]interface{}{
+								"configMap": map[string]any{
 									"name": "resume-profile",
 								},
 							},
-							map[string]interface{}{
+							map[string]any{
 								"name": "experience-mount",
-								"configMap": map[string]interface{}{
+								"configMap": map[string]any{
 									"name": "resume-experience",
 								},
 							},
-							map[string]interface{}{
+							map[string]any{
 								"name": "certs-mount",
-								"configMap": map[string]interface{}{
+								"configMap": map[string]any{
 									"name": "resume-cert",
 								},
 							},
-							map[string]interface{}{
+							map[string]any{
 								"name": "config",
-								"configMap": map[string]interface{}{
+								"configMap": map[string]any{
 									"name": "resume-config",
 								},
+							},
+							map[string]any{
+								"name":     "tmp",
+								"emptyDir": map[string]any{},
 							},
 						},
 					},
@@ -143,6 +179,12 @@ func CreateDeploymentResume(
 	}
 
 	resourceObj.SetNamespace(parent.Namespace)
+
+	// inject pod labels/annotations, podSecurityContext, and the resume
+	// container securityContext from the Profile spec.
+	if err := applyPodCustomizations(parent, resourceObj, "resume", parent.Spec.SecurityContext); err != nil {
+		return nil, err
+	}
 
 	resourceObjs = append(resourceObjs, resourceObj)
 

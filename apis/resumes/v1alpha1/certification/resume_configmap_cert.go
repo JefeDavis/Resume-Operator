@@ -25,19 +25,40 @@ import (
 	resumesv1alpha1 "github.com/jefedavis/resume-operator/apis/resumes/v1alpha1"
 )
 
-// CreateConfigMapResumeCert creates the resume-cert ConfigMap resource.
-func CreateConfigMapResumeCert(
-	parent *resumesv1alpha1.Certification,
+// certEntry renders a single certification's YAML document for the Hugo data file.
+func certEntry(cert *resumesv1alpha1.Certification) string {
+	return `
+---
+title: ` + cert.Spec.Title + `
+issuer: ` + cert.Spec.Issuer + `
+earnedDate: ` + cert.Spec.EarnedDate + `
+alias: ` + cert.Spec.Alias + `
+validationURL: ` + cert.Spec.ValidationURL + `
+imageURL: ` + cert.Spec.ImageURL + ``
+}
+
+// AggregateConfigMapResumeCert builds the resume-cert ConfigMap from all
+// certifications belonging to the collection. The collection (Profile) owns the
+// ConfigMap, so there is a single stable owner instead of each certification
+// fighting over the owner reference. Each certification is keyed by its resource
+// name, which is always set and unique within the namespace.
+func AggregateConfigMapResumeCert(
 	collection *resumesv1alpha1.Profile,
-) ([]client.Object, error) {
-	resourceObjs := []client.Object{}
+	certs []resumesv1alpha1.Certification,
+) client.Object {
+	data := map[string]any{}
+	for i := range certs {
+		cert := &certs[i]
+		data[fmt.Sprintf("%s.yaml", cert.Name)] = certEntry(cert)
+	}
+
 	resourceObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "v1",
 			"kind":       "ConfigMap",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "resume-cert",
-				"labels": map[string]interface{}{
+				"labels": map[string]any{
 					"app.kubernetes.io/name":      "hugo",
 					"app.kubernetes.io/component": "data",
 					"app.kubernetes.io/part-of":   "resume",
@@ -47,31 +68,14 @@ func CreateConfigMapResumeCert(
 					"app.kubernetes.io/managed-by": "resume-operator",
 					"app.kubernetes.io/created-by": "resume-controller-manager",
 					// controlled by collection field: web.image.tag
-					"app.kubernetes.io/version": collection.Spec.Web.Image.Tag,
+					"app.kubernetes.io/version": resumesv1alpha1.LabelValue(collection.Spec.Web.Image.Tag),
 				},
 			},
-			"data": map[string]interface{}{
-				// controlled by field: title
-				// controlled by field: issuer
-				// controlled by field: earnedDate
-				// controlled by field: alias
-				// controlled by field: validationURL
-				// controlled by field: imageURL
-				fmt.Sprintf("%s.yaml", parent.Spec.Alias): `
----
-title: ` + parent.Spec.Title + `
-issuer: ` + parent.Spec.Issuer + `
-earnedDate: ` + parent.Spec.EarnedDate + `
-alias: ` + parent.Spec.Alias + `
-validationURL: ` + parent.Spec.ValidationURL + `
-imageURL: ` + parent.Spec.ImageURL + ``,
-			},
+			"data": data,
 		},
 	}
 
-	resourceObj.SetNamespace(parent.Namespace)
+	resourceObj.SetNamespace(collection.Namespace)
 
-	resourceObjs = append(resourceObjs, resourceObj)
-
-	return resourceObjs, nil
+	return resourceObj
 }

@@ -23,71 +23,97 @@ import (
 	resumesv1alpha1 "github.com/jefedavis/resume-operator/apis/resumes/v1alpha1"
 )
 
-// CreateIngressResume creates the resume Ingress resource.
+// CreateIngressResume creates the resume Ingress resource. It is skipped when a
+// Route is configured (the Route takes precedence over Ingress).
 func CreateIngressResume(
 	parent *resumesv1alpha1.Profile,
 ) ([]client.Object, error) {
 	resourceObjs := []client.Object{}
+
+	// Route takes precedence; when it is set we do not create an Ingress.
+	if parent.Spec.Route != nil {
+		return resourceObjs, nil
+	}
+
+	// Default ingress class; overridable through spec.ingress.className.
+	className := "nginx"
+
+	labels := map[string]any{
+		"app.kubernetes.io/name":      "hugo",
+		"app.kubernetes.io/component": "webfront",
+		"app.kubernetes.io/part-of":   "resume",
+		// controlled by field: profile.firstName
+		// controlled by field: profile.lastName
+		"app.kubernetes.io/instance":   "resume-" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
+		"app.kubernetes.io/managed-by": "resume-operator",
+		"app.kubernetes.io/created-by": "resume-controller-manager",
+		// controlled by field: web.image.tag
+		"app.kubernetes.io/version": resumesv1alpha1.LabelValue(parent.Spec.Web.Image.Tag),
+	}
+
+	// Annotations are entirely user supplied (e.g. cert-manager issuer, TLS
+	// settings); nothing is hardcoded.
+	annotations := map[string]any{}
+
+	if ingress := parent.Spec.Ingress; ingress != nil {
+		if ingress.ClassName != "" {
+			className = ingress.ClassName
+		}
+
+		for k, v := range ingress.Labels {
+			labels[k] = v
+		}
+
+		for k, v := range ingress.Annotations {
+			annotations[k] = v
+		}
+	}
+
 	resourceObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "networking.k8s.io/v1",
 			"kind":       "Ingress",
-			"metadata": map[string]interface{}{
-				"name": "resume",
-				"labels": map[string]interface{}{
-					"app.kubernetes.io/name":      "hugo",
-					"app.kubernetes.io/component": "webfront",
-					"app.kubernetes.io/part-of":   "resume",
-					// controlled by field: profile.firstName
-					// controlled by field: profile.lastName
-					"app.kubernetes.io/instance":   "resume-" + parent.Spec.Profile.FirstName + "" + parent.Spec.Profile.LastName + "",
-					"app.kubernetes.io/managed-by": "resume-operator",
-					"app.kubernetes.io/created-by": "resume-controller-manager",
-					// controlled by field: web.image.tag
-					"app.kubernetes.io/version": parent.Spec.Web.Image.Tag,
-				},
-				"annotations": map[string]interface{}{
-					// controlled by field: certIssuer
-					"cert-manager.io/cluster-issuer": parent.Spec.CertIssuer,
-				},
+			"metadata": map[string]any{
+				"name":        "resume",
+				"labels":      labels,
+				"annotations": annotations,
 			},
-			"spec": map[string]interface{}{
-				// controlled by field: ingressClass
-				"ingressClassName": parent.Spec.IngressClass,
-				"tls": []interface{}{
-					map[string]interface{}{
-						"hosts": []interface{}{
+			"spec": map[string]any{
+				"ingressClassName": className,
+				"tls": []any{
+					map[string]any{
+						"hosts": []any{
 							// controlled by field: baseURL
 							parent.Spec.BaseURL,
 						},
 						"secretName": "resume-tls",
 					},
 				},
-				"rules": []interface{}{
-					map[string]interface{}{
+				"rules": []any{
+					map[string]any{
 						// controlled by field: baseURL
 						"host": parent.Spec.BaseURL,
-						"http": map[string]interface{}{
-							"paths": []interface{}{
-								map[string]interface{}{
+						"http": map[string]any{
+							"paths": []any{
+								map[string]any{
 									"pathType": "Prefix",
 									"path":     "/",
-									"backend": map[string]interface{}{
-										"service": map[string]interface{}{
+									"backend": map[string]any{
+										"service": map[string]any{
 											"name": "resume-svc",
-											"port": map[string]interface{}{
+											"port": map[string]any{
 												"number": 8080,
 											},
 										},
 									},
 								},
-								map[string]interface{}{
+								map[string]any{
 									"pathType": "Prefix",
 									"path":     "/convert",
-									"backend": map[string]interface{}{
-										"service": map[string]interface{}{
+									"backend": map[string]any{
+										"service": map[string]any{
 											"name": "pdf-converter-svc",
-											"port": map[string]interface{}{
+											"port": map[string]any{
 												"number": 3000,
 											},
 										},

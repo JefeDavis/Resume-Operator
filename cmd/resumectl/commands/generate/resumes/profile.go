@@ -60,7 +60,7 @@ func GenerateProfile(g *cmdgenerate.GenerateSubCommand) error {
 		return fmt.Errorf("failed to open collection file %s, %w", collectionFile, err)
 	}
 
-	var collection map[string]interface{}
+	var collection map[string]any
 
 	if err := yaml.Unmarshal(collectionFile, &collection); err != nil {
 		return fmt.Errorf("failed to unmarshal yaml into collection, %w", err)

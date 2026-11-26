@@ -119,9 +119,7 @@ var deletableWhitelist = []string{
 	"StorageClass",
 }
 
-//
 // test entrypoint
-//
 func TestMain(t *testing.T) {
 	// setup the test suite
 	e2eTestSuite := new(E2ETestSuiteConfig)
@@ -254,7 +252,6 @@ func (tester *E2ETest) setup() error {
 	return nil
 }
 
-//
 // deploy
 //
 // DEPLOY="true" will run all tasks to deploy into the cluster to include:
@@ -266,7 +263,6 @@ func (tester *E2ETest) setup() error {
 // DEPLOY_IN_CLUSTER="true" ensures that the controller is running before proceeding.
 // if this option is not used, a separate process such as the 'make run' target
 // should be handling the controller functions for the test.
-//
 func deploy(s *E2ETestSuiteConfig) error {
 	// install crds
 	if os.Getenv("DEPLOY") == "true" {
@@ -371,9 +367,7 @@ func (s *E2EComponentTestSuite) teardown() {
 	}
 }
 
-//
 // helpers
-//
 func readYamlManifest(path string, destination *unstructured.Unstructured) ([]byte, error) {
 	// read the yaml file
 	yamlFile, err := os.ReadFile(path)
@@ -391,7 +385,7 @@ func readYamlManifest(path string, destination *unstructured.Unstructured) ([]by
 	return yamlFile, nil
 }
 
-func readYamlFile(path string, destination interface{}) error {
+func readYamlFile(path string, destination any) error {
 	// read the yaml file
 	yamlFile, err := os.ReadFile(path)
 	if err != nil {
@@ -702,7 +696,7 @@ func waitForCustomResource(tester *E2ETest) error {
 			return false, nil
 		}
 
-		createStatus := customResource.Object["status"].(map[string]interface{})["created"]
+		createStatus := customResource.Object["status"].(map[string]any)["created"]
 		if createStatus != nil {
 			created, ok := createStatus.(bool)
 			if !ok {
@@ -753,9 +747,7 @@ func waitFor(isReady readyChecker) error {
 	}
 }
 
-//
 // tests
-//
 func testCreateCustomResource(tester *E2ETest) error {
 	_, err := getClientForResource(tester, tester.unstructured).
 		Create(context.TODO(), tester.unstructured, metav1.CreateOptions{})

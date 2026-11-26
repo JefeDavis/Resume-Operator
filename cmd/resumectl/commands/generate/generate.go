@@ -112,7 +112,7 @@ func (g *GenerateSubCommand) Setup() {
 
 // GetParent is a convenience function written when the CLI code is scaffolded
 // to return the parent command and avoid scaffolding code with bad imports.
-func GetParent(c interface{}) *cobra.Command {
+func GetParent(c any) *cobra.Command {
 	switch subcommand := c.(type) {
 	case *GenerateSubCommand:
 		return subcommand.Command

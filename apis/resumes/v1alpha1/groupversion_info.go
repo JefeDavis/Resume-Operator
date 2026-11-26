@@ -15,8 +15,8 @@ limitations under the License.
 */
 
 // Package v1alpha1 contains API Schema definitions for the resumes v1alpha1 API group
-//+kubebuilder:object:generate=true
-//+groupName=resumes.jefedavis.dev
+// +kubebuilder:object:generate=true
+// +groupName=resumes.jefedavis.dev
 package v1alpha1
 
 import (

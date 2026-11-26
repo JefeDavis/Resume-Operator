@@ -31,9 +31,7 @@ import (
 	"github.com/jefedavis/resume-operator/apis/resumes/v1alpha1/experience"
 )
 
-//
 // resumesv1alpha1JobExperience tests
-//
 func resumesv1alpha1JobExperienceChildrenFuncs(tester *E2ETest) error {
 	// TODO: need to run r.GetResources(request) on the reconciler to get the mutated resources
 	if len(experience.CreateFuncs) == 0 {

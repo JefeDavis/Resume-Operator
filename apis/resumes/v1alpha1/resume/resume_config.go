@@ -29,12 +29,12 @@ func CreateConfigMapResumeConfig(
 ) ([]client.Object, error) {
 	resourceObjs := []client.Object{}
 	resourceObj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
+		Object: map[string]any{
 			"apiVersion": "v1",
 			"kind":       "ConfigMap",
-			"metadata": map[string]interface{}{
+			"metadata": map[string]any{
 				"name": "resume-config",
-				"labels": map[string]interface{}{
+				"labels": map[string]any{
 					"app.kubernetes.io/name":      "hugo",
 					"app.kubernetes.io/component": "config",
 					"app.kubernetes.io/part-of":   "resume",
@@ -44,14 +44,14 @@ func CreateConfigMapResumeConfig(
 					"app.kubernetes.io/managed-by": "resume-operator",
 					"app.kubernetes.io/created-by": "resume-controller-manager",
 					// controlled by field: web.image.tag
-					"app.kubernetes.io/version": parent.Spec.Web.Image.Tag,
+					"app.kubernetes.io/version": resumesv1alpha1.LabelValue(parent.Spec.Web.Image.Tag),
 				},
 			},
-			"data": map[string]interface{}{
+			"data": map[string]any{
 				// controlled by field: baseURL
 				// controlled by field: pageTitle
 				// controlled by field: pageCount
-				"config.toml": `languageCode = "en-us"
+				"config.toml": `locale = "en-us"
 defaultContentLanguage = "en"
 enableRobotsTXT = true
 enableEmoji = true
@@ -61,6 +61,20 @@ disableKinds = ["page", "section", "taxonomy", "term", "RSS", "sitemap"]
 baseURL = "https://` + parent.Spec.BaseURL + `/"
 title = "` + parent.Spec.PageTitle + `"
 #googleAnalytics = ""
+
+# Data arrives via ConfigMap volume mounts, which kubelet exposes as symlinks.
+# Hugo does not follow symlinked files, so mount the kubelet-maintained "..data"
+# dir (the real file set) as a module mount for each data component.
+[module]
+  [[module.mounts]]
+    source = "data/..data"
+    target = "data"
+  [[module.mounts]]
+    source = "data/experience/..data"
+    target = "data/experience"
+  [[module.mounts]]
+    source = "data/certs/..data"
+    target = "data/certs"
 
 [params]
 enableMetaTags = true

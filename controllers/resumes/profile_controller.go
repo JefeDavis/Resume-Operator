@@ -25,12 +25,18 @@ import (
 	"github.com/nukleros/operator-builder-tools/pkg/controller/predicates"
 	"github.com/nukleros/operator-builder-tools/pkg/controller/workload"
 	apierrs "k8s.io/apimachinery/pkg/api/errors"
-	"k8s.io/client-go/tools/record"
+	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/client-go/tools/events"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
+	"sigs.k8s.io/controller-runtime/pkg/handler"
+	"sigs.k8s.io/controller-runtime/pkg/manager"
+	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 
 	resumesv1alpha1 "github.com/jefedavis/resume-operator/apis/resumes/v1alpha1"
+	"github.com/jefedavis/resume-operator/apis/resumes/v1alpha1/certification"
+	"github.com/jefedavis/resume-operator/apis/resumes/v1alpha1/experience"
 	"github.com/jefedavis/resume-operator/apis/resumes/v1alpha1/resume"
 	"github.com/jefedavis/resume-operator/internal/dependencies"
 	"github.com/jefedavis/resume-operator/internal/mutate"
@@ -41,18 +47,20 @@ type ProfileReconciler struct {
 	client.Client
 	Name         string
 	Log          logr.Logger
+	Manager      manager.Manager
 	Controller   controller.Controller
-	Events       record.EventRecorder
+	Events       events.EventRecorder
 	FieldManager string
 	Watches      []client.Object
 	Phases       *phases.Registry
 }
 
-func NewProfileReconciler(mgr ctrl.Manager) *ProfileReconciler {
+func NewProfileReconciler(mgr ctrl.Manager, recorder events.EventRecorder) *ProfileReconciler {
 	return &ProfileReconciler{
 		Name:         "Profile",
 		Client:       mgr.GetClient(),
-		Events:       mgr.GetEventRecorderFor("Profile-Controller"),
+		Manager:      mgr,
+		Events:       recorder,
 		FieldManager: "Profile-reconciler",
 		Log:          ctrl.Log.WithName("controllers").WithName("resumes").WithName("Profile"),
 		Watches:      []client.Object{},
@@ -64,6 +72,9 @@ func NewProfileReconciler(mgr ctrl.Manager) *ProfileReconciler {
 // +kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=core,resources=services,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=networking.k8s.io,resources=ingresses,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=gateway.networking.k8s.io,resources=httproutes,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=resumes.jefedavis.dev,resources=certifications,verbs=get;list;watch
+// +kubebuilder:rbac:groups=resumes.jefedavis.dev,resources=jobexperiences,verbs=get;list;watch
 // +kubebuilder:rbac:groups=resumes.jefedavis.dev,resources=profiles,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=resumes.jefedavis.dev,resources=profiles/status,verbs=get;update;patch
 
@@ -144,6 +155,16 @@ func (r *ProfileReconciler) GetResources(req *workload.Request) ([]client.Object
 		return nil, err
 	}
 
+	// aggregate the component-provided data (certifications and job experiences)
+	// into collection-owned ConfigMaps so there is a single stable owner instead
+	// of each component fighting over the owner reference.
+	dataResources, err := r.aggregateComponentData(req.Context, component)
+	if err != nil {
+		return nil, err
+	}
+
+	resources = append(resources, dataResources...)
+
 	// run through the mutation functions to mutate the resources
 	for _, resource := range resources {
 		mutatedResources, skip, err := r.Mutate(req, resource)
@@ -161,9 +182,81 @@ func (r *ProfileReconciler) GetResources(req *workload.Request) ([]client.Object
 	return resourceObjects, nil
 }
 
+// aggregateComponentData lists the certification and job experience components
+// belonging to the collection and builds the collection-owned data ConfigMaps.
+func (r *ProfileReconciler) aggregateComponentData(
+	ctx context.Context,
+	collection *resumesv1alpha1.Profile,
+) ([]client.Object, error) {
+	var certs resumesv1alpha1.CertificationList
+	if err := r.List(ctx, &certs, client.InNamespace(collection.Namespace)); err != nil {
+		return nil, fmt.Errorf("unable to list certifications, %w", err)
+	}
+
+	var experiences resumesv1alpha1.JobExperienceList
+	if err := r.List(ctx, &experiences, client.InNamespace(collection.Namespace)); err != nil {
+		return nil, fmt.Errorf("unable to list job experiences, %w", err)
+	}
+
+	collectionCerts := []resumesv1alpha1.Certification{}
+	for _, cert := range certs.Items {
+		if collectionMatches(cert.Spec.Collection.Name, collection) {
+			collectionCerts = append(collectionCerts, cert)
+		}
+	}
+
+	collectionExperiences := []resumesv1alpha1.JobExperience{}
+	for _, exp := range experiences.Items {
+		if collectionMatches(exp.Spec.Collection.Name, collection) {
+			collectionExperiences = append(collectionExperiences, exp)
+		}
+	}
+
+	experienceCM, err := experience.AggregateConfigMapResumeExperience(collection, collectionExperiences)
+	if err != nil {
+		return nil, err
+	}
+
+	return []client.Object{
+		certification.AggregateConfigMapResumeCert(collection, collectionCerts),
+		experienceCM,
+	}, nil
+}
+
+// collectionMatches reports whether a component that references the named
+// collection belongs to the given collection. An empty reference matches the
+// single collection in the namespace.
+func collectionMatches(refName string, collection *resumesv1alpha1.Profile) bool {
+	return refName == "" || refName == collection.Name
+}
+
+// mapComponentToCollection enqueues the Profile collection(s) in a component's
+// namespace so the aggregated data ConfigMaps are rebuilt when a certification
+// or job experience is created, updated, or deleted.
+func (r *ProfileReconciler) mapComponentToCollection(ctx context.Context, obj client.Object) []reconcile.Request {
+	var profiles resumesv1alpha1.ProfileList
+	if err := r.List(ctx, &profiles, client.InNamespace(obj.GetNamespace())); err != nil {
+		return nil
+	}
+
+	requests := make([]reconcile.Request, 0, len(profiles.Items))
+	for _, profile := range profiles.Items {
+		requests = append(requests, reconcile.Request{
+			NamespacedName: types.NamespacedName{Name: profile.Name, Namespace: profile.Namespace},
+		})
+	}
+
+	return requests
+}
+
 // GetEventRecorder returns the event recorder for writing kubernetes events.
-func (r *ProfileReconciler) GetEventRecorder() record.EventRecorder {
+func (r *ProfileReconciler) GetEventRecorder() events.EventRecorder {
 	return r.Events
+}
+
+// GetManager returns the controller manager associated with the reconciler.
+func (r *ProfileReconciler) GetManager() manager.Manager {
+	return r.Manager
 }
 
 // GetFieldManager returns the name of the field manager for the controller.
@@ -215,6 +308,8 @@ func (r *ProfileReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	baseController, err := ctrl.NewControllerManagedBy(mgr).
 		WithEventFilter(predicates.WorkloadPredicates()).
 		For(&resumesv1alpha1.Profile{}).
+		Watches(&resumesv1alpha1.Certification{}, handler.EnqueueRequestsFromMapFunc(r.mapComponentToCollection)).
+		Watches(&resumesv1alpha1.JobExperience{}, handler.EnqueueRequestsFromMapFunc(r.mapComponentToCollection)).
 		Build(r)
 	if err != nil {
 		return fmt.Errorf("unable to setup controller, %w", err)
